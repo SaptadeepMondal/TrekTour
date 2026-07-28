@@ -1,0 +1,203 @@
+{% extends "admin/base.html" %}
+
+{% block title %}
+{% if trek %}Edit Trek{% else %}Add Trek{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header py-3 bg-white">
+                <h4 class="mb-0 fw-bold" style="color: var(--primary)">
+                    {% if trek %}Edit Trek: {{ trek.name }}{% else %}Add New Trek{% endif %}
+                </h4>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST" data-is-edit="{% if trek and trek.id is defined %}true{% else %}false{% endif %}" data-booked-slots="{% if booked_slots is defined %}{{ booked_slots }}{% else %}0{% endif %}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Trek Name</label>
+                            <input type="text" class="form-control" name="name" value="{{ trek.name if trek else '' }}" placeholder="e.g. Kedarkantha Winter Trek" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{ trek.location if trek else '' }}" placeholder="e.g. Uttarakhand, India" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Difficulty Level</label>
+                            <select class="form-select" name="difficulty">
+                                <option value="Easy" {% if trek and trek.difficulty=="Easy" %}selected{% endif %}>Easy</option>
+                                <option value="Moderate" {% if trek and trek.difficulty=="Moderate" %}selected{% endif %}>Moderate</option>
+                                <option value="Hard" {% if trek and trek.difficulty=="Hard" %}selected{% endif %}>Hard</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Duration (Days)</label>
+                            <input type="number" min="1" class="form-control bg-light" name="duration" value="{{ trek.duration if trek else '' }}" placeholder="e.g. 5" required readonly style="cursor: not-allowed;">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Total Slots</label>
+                            <input type="number" min="1" class="form-control" name="total_slots" value="{{ trek.total_slots if trek else '' }}" placeholder="e.g. 30" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Available Slots</label>
+                            <input type="number" min="0" class="form-control" name="available_slots" value="{{ trek.available_slots if trek else '' }}" placeholder="e.g. 30" required>
+                        </div>
+                    </div>
+                    {% if booked_slots is defined and booked_slots > 0 %}
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="alert alert-warning py-2 mb-0" style="font-size: 0.9em;">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>Active Bookings Note:</strong> This trek has <strong>{{ booked_slots }}</strong> active booking(s). 
+                                Total slots must be at least <strong>{{ booked_slots }}</strong>. 
+                                Available slots cannot exceed <strong>{{ trek.total_slots - booked_slots }}</strong>.
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" value="{{ trek.start_date if trek else '' }}" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">End Date</label>
+                            <input type="date" class="form-control" name="end_date" value="{{ trek.end_date if trek else '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea class="form-control" rows="4" name="description" placeholder="Describe the trek experience, routes, requirements..." required>{{ trek.description if trek else '' }}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-custom px-4 fw-semibold">
+                            {% if trek %}Update Trek{% else %}Add Trek{% endif %}
+                        </button>
+                        <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const startDateInput = document.querySelector('input[name="start_date"]');
+    const endDateInput = document.querySelector('input[name="end_date"]');
+    const durationInput = document.querySelector('input[name="duration"]');
+    const totalSlotsInput = document.querySelector('input[name="total_slots"]');
+    const availableSlotsInput = document.querySelector('input[name="available_slots"]');
+    const form = document.querySelector('form');
+
+    const isEdit = form.dataset.isEdit === "true";
+    const bookedSlots = parseInt(form.dataset.bookedSlots || "0", 10);
+
+    // Set minimum start date for Add Trek (not edit)
+    if (!isEdit) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const localToday = `${yyyy}-${mm}-${dd}`;
+        startDateInput.setAttribute('min', localToday);
+    }
+
+    function getNextDayStr(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        d.setDate(d.getDate() + 1);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function updateMinEndDate() {
+        if (startDateInput.value) {
+            endDateInput.setAttribute('min', getNextDayStr(startDateInput.value));
+        }
+    }
+
+    function calculateDuration() {
+        if (startDateInput.value && endDateInput.value) {
+            const start = new Date(startDateInput.value);
+            const end = new Date(endDateInput.value);
+            const diffTime = end - start;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            durationInput.value = diffDays > 0 ? diffDays : 0;
+        }
+    }
+
+    startDateInput.addEventListener('change', function() {
+        updateMinEndDate();
+        calculateDuration();
+    });
+
+    endDateInput.addEventListener('change', calculateDuration);
+
+    // Initial setup for date ranges
+    if (startDateInput.value) {
+        updateMinEndDate();
+    }
+
+    // Slot validation limits
+    if (isEdit) {
+        totalSlotsInput.setAttribute('min', Math.max(1, bookedSlots));
+    }
+
+    function updateAvailableSlotsMax() {
+        const total = parseInt(totalSlotsInput.value) || 0;
+        const maxAvailable = Math.max(0, total - bookedSlots);
+        availableSlotsInput.setAttribute('max', maxAvailable);
+    }
+
+    totalSlotsInput.addEventListener('input', updateAvailableSlotsMax);
+    
+    // Initial slots limits setup
+    updateAvailableSlotsMax();
+
+    form.addEventListener('submit', function(e) {
+        const total = parseInt(totalSlotsInput.value) || 0;
+        const available = parseInt(availableSlotsInput.value) || 0;
+        
+        if (available > total) {
+            alert('Available slots cannot exceed total slots.');
+            e.preventDefault();
+            return;
+        }
+
+        if (isEdit) {
+            if (total < bookedSlots) {
+                alert(`Total slots cannot be less than active bookings (${bookedSlots}).`);
+                e.preventDefault();
+                return;
+            }
+            const maxAvailable = total - bookedSlots;
+            if (available > maxAvailable) {
+                alert(`Available slots cannot exceed ${maxAvailable} (Total slots minus active bookings).`);
+                e.preventDefault();
+                return;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

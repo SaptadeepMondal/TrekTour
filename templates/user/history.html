@@ -1,0 +1,62 @@
+{% extends "user/base.html" %}
+{% block title %}Trekking History{% endblock %}
+{% block content %}
+
+<div class="row align-items-center mb-4">
+    <div class="col-md-6">
+        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">Trekking History</h2>
+        <p class="text-muted mb-0">Past completed treks and expedition records.</p>
+    </div>
+    <div class="col-md-6 mt-3 mt-md-0 text-md-end">
+        <a href="{{ url_for('user.bookings') }}" class="btn btn-outline-secondary fw-semibold">
+            View My Bookings
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Booking ID</th>
+                    <th>Trek Destination</th>
+                    <th>Schedule Dates</th>
+                    <th>Completed Date</th>
+                    <th>Slots Reserved</th>
+                    <th class="pe-4">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td class="ps-4 text-muted fw-semibold">#{{ booking.id }}</td>
+                    <td class="fw-bold" style="color: var(--primary);">{{ booking.trek.name }}</td>
+                    <td>
+                        <span class="small fw-semibold text-dark">
+                            {{ booking.trek.start_date.strftime('%d %b %Y') if booking.trek.start_date else 'N/A' }}
+                        </span>
+                        <span class="text-muted mx-1">to</span>
+                        <span class="small fw-semibold text-dark">
+                            {{ booking.trek.end_date.strftime('%d %b %Y') if booking.trek.end_date else 'N/A' }}
+                        </span>
+                    </td>
+                    <td>{{ booking.trek.end_date.strftime('%d-%m-%Y') if booking.trek.end_date else 'N/A' }}</td>
+                    <td>{{ booking.number_of_people }} Person</td>
+                    <td class="pe-4">
+                        <span class="badge bg-info text-white">Completed</span>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        No completed treks in your history yet.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

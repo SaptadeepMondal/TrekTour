@@ -1,0 +1,54 @@
+{% extends "user/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="row align-items-center mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">Welcome Back, {{ current_user.name }}!</h2>
+        <p class="text-muted">Explore upcoming adventures, view your bookings, and manage your profile.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm hover-card">
+            <div class="card-body p-4 text-center">
+                <h6 class="text-uppercase text-muted fw-semibold small mb-2" style="letter-spacing: 0.05em;">Total Bookings</h6>
+                <h2 class="display-5 fw-bold mb-0" style="color: var(--primary);">{{ total_bookings }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm hover-card">
+            <div class="card-body p-4 text-center">
+                <h6 class="text-uppercase text-muted fw-semibold small mb-2" style="letter-spacing: 0.05em;">Upcoming Treks</h6>
+                <h2 class="display-5 fw-bold mb-0" style="color: var(--primary);">{{ upcoming }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm hover-card">
+            <div class="card-body p-4 text-center">
+                <h6 class="text-uppercase text-muted fw-semibold small mb-2" style="letter-spacing: 0.05em;">Completed Treks</h6>
+                <h2 class="display-5 fw-bold mb-0" style="color: var(--primary);">{{ completed }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 p-4 text-center bg-white rounded shadow-sm border">
+    <h5 class="fw-bold" style="color: var(--primary);">Looking for your next adventure?</h5>
+    <p class="text-muted mb-3">Check out our catalog of hand-crafted trekking expeditions across scenic destinations.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a href="{{ url_for('user.treks') }}" class="btn btn-custom px-4 py-2 fw-semibold">
+            Explore Trek Catalog &rarr;
+        </a>
+        <a href="{{ url_for('user.history') }}" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
+            View Trekking History
+        </a>
+    </div>
+</div>
+
+{% endblock %}
