@@ -119,8 +119,6 @@ Upon launching the app for the first time, the database is automatically created
 - **Email:** `admin@trek.com`
 - **Password:** `admin123`
 
-> [!WARNING]
-> Please remember to change these credentials immediately if deploying to a production environment to ensure system security.
 
 ---
 
