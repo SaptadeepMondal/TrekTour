@@ -1,10 +1,9 @@
 from functools import wraps
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
-from models import db, Trek, Booking, User
+from models import Trek, Booking, User
 
 staff = Blueprint("staff", __name__, url_prefix="/staff")
-
 
 
 def staff_required(func):
@@ -22,37 +21,36 @@ def staff_required(func):
     return wrapper
 
 
-
 @staff.route("/dashboard")
 @login_required
 @staff_required
 def staff_dashboard():
 
-    assigned_treks = Trek.query.filter_by(
-        assigned_staff=current_user.id
-    ).count()
+    assigned_treks = Trek.objects(assigned_staff=current_user.id)
+    assigned_treks_count = assigned_treks.count()
 
-    total_participants = Booking.query.join(Trek).filter(
-        Trek.assigned_staff == current_user.id
-    ).count()
+    total_participants = Booking.objects(trek_id__in=assigned_treks).count()
 
     return render_template(
         "staff/dashboard.html",
-        assigned_treks=assigned_treks,
+        assigned_treks=assigned_treks_count,
         total_participants=total_participants
     )
 
 
-@staff.route("/treks/update/<int:id>", methods=["GET", "POST"])
+@staff.route("/treks/update/<id>", methods=["GET", "POST"])
 @login_required
 @staff_required
 def update_trek(id):
-    trek = Trek.query.get_or_404(id)
-    if trek.assigned_staff != current_user.id:
+    trek = Trek.objects(id=id).first()
+    if not trek:
+        abort(404)
+        
+    if trek.assigned_staff.id != current_user.id:
         flash("Access Denied!", "danger")
         return redirect(url_for("staff.assigned_treks"))
     
-    booked_slots = Booking.query.filter_by(trek_id=trek.id, status="Booked").count()
+    booked_slots = Booking.objects(trek_id=trek.id, status="Booked").count()
     if request.method == "POST":
         try:
             available_slots = int(request.form["available_slots"])
@@ -73,8 +71,9 @@ def update_trek(id):
                 for booking in trek.bookings:
                     if booking.status == "Booked":
                         booking.status = "Completed"
+                        booking.save()
             
-            db.session.commit()
+            trek.save()
             flash("Trek updated successfully.", "success")
             return redirect(url_for("staff.assigned_treks"))
         except ValueError:
@@ -91,27 +90,26 @@ def update_trek(id):
 @login_required
 @staff_required
 def assigned_treks():
-    treks = Trek.query.filter_by(
-        assigned_staff=current_user.id
-    ).all()
+    treks = Trek.objects(assigned_staff=current_user.id)
     return render_template(
         "staff/assigned_treks.html",
         treks=treks
     )
 
 
-
-@staff.route("/participants/<int:id>")
+@staff.route("/participants/<id>")
 @login_required
 @staff_required
 def participants(id):
-    trek = Trek.query.get_or_404(id)
-    if trek.assigned_staff != current_user.id:
+    trek = Trek.objects(id=id).first()
+    if not trek:
+        abort(404)
+        
+    if trek.assigned_staff.id != current_user.id:
         flash("Access Denied!", "danger")
         return redirect(url_for("staff.assigned_treks"))
-    bookings = Booking.query.filter_by(
-        trek_id=id
-    ).all()
+        
+    bookings = Booking.objects(trek_id=id)
     return render_template(
         "staff/participants.html",
         trek=trek,

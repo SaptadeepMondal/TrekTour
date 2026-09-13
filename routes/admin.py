@@ -1,8 +1,10 @@
 from functools import wraps
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import db, User, Trek, Booking
+from models import User, Trek, Booking
 from datetime import datetime, date
+from mongoengine.queryset.visitor import Q
+from flask import abort
 
 class DummyTrek:
     def __init__(self, **kwargs):
@@ -15,43 +17,29 @@ class DummyTrek:
             setattr(self, k, v)
 
 
-
 admin = Blueprint("admin",__name__,url_prefix="/admin")
-
-
 
 def admin_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-
         if not current_user.is_authenticated:
             return redirect(url_for("auth.login"))
-
         if current_user.role != "admin":
             flash("Access Denied!", "danger")
             return redirect(url_for("auth.login"))
-
         return func(*args, **kwargs)
-
     return wrapper
-
-
 
 @admin.route("/dashboard")
 @login_required
 @admin_required
 def admin_dashboard():
-    total_users = User.query.filter_by(role="user").count()
-    total_staff = User.query.filter_by(role="staff").count()
-    total_treks = Trek.query.count()
-    total_bookings = Booking.query.count()
-    pending_staff = User.query.filter_by(
-        role="staff",
-        status="pending"
-    ).count()
-    recent_bookings = Booking.query.order_by(
-        Booking.booking_date.desc()
-    ).limit(10).all()
+    total_users = User.objects(role="user").count()
+    total_staff = User.objects(role="staff").count()
+    total_treks = Trek.objects.count()
+    total_bookings = Booking.objects.count()
+    pending_staff = User.objects(role="staff", status="pending").count()
+    recent_bookings = Booking.objects.order_by('-booking_date').limit(10)
 
     return render_template(
         "admin/dashboard.html",
@@ -63,45 +51,38 @@ def admin_dashboard():
         recent_bookings=recent_bookings
     )
 
-
-
 @admin.route("/users")
 @login_required
 @admin_required
 def users():
     search = request.args.get("search", "")
     if search:
-        users = User.query.filter(
-            User.role == "user",
-            User.name.contains(search)
-        ).all()
+        users = User.objects(role="user", name__icontains=search)
     else:
-        users = User.query.filter_by(role="user").all()
+        users = User.objects(role="user")
     return render_template("admin/users.html",users=users,search=search)
 
-
-@admin.route("/users/blacklist/<int:id>")
+@admin.route("/users/blacklist/<id>")
 @login_required
 @admin_required
 def blacklist_user(id):
-    user = User.query.get_or_404(id)
+    user = User.objects(id=id).first()
+    if not user: abort(404)
     user.status = "blacklisted"
-    db.session.commit()
+    user.save()
     flash("User blacklisted.", "warning")
     return redirect(url_for("admin.users"))
 
-
-@admin.route("/users/unblacklist/<int:id>")
+@admin.route("/users/unblacklist/<id>")
 @login_required
 @admin_required
 def unblacklist_user(id):
-    user = User.query.get_or_404(id)
+    user = User.objects(id=id).first()
+    if not user: abort(404)
     user.status = "approved"
-    db.session.commit()
+    user.save()
     flash("User restored.", "success")
     return redirect(url_for("admin.users"))
-
-
 
 @admin.route("/staff")
 @login_required
@@ -109,51 +90,43 @@ def unblacklist_user(id):
 def staff():
     search = request.args.get("search", "")
     if search:
-        staff = User.query.filter(
-            User.role == "staff",
-            User.name.contains(search)
-        ).all()
+        staff = User.objects(role="staff", name__icontains=search)
     else:
-        staff = User.query.filter_by(role="staff").all()
-    return render_template(
-        "admin/staff.html",
-        staff=staff,
-        search=search
-    )
+        staff = User.objects(role="staff")
+    return render_template("admin/staff.html", staff=staff, search=search)
 
-
-@admin.route("/staff/approve/<int:id>")
+@admin.route("/staff/approve/<id>")
 @login_required
 @admin_required
 def approve_staff(id):
-    staff = User.query.get_or_404(id)
+    staff = User.objects(id=id).first()
+    if not staff: abort(404)
     staff.status = "approved"
-    db.session.commit()
+    staff.save()
     flash("Staff approved successfully.", "success")
     return redirect(url_for("admin.staff"))
 
-
-@admin.route("/staff/blacklist/<int:id>")
+@admin.route("/staff/blacklist/<id>")
 @login_required
 @admin_required
 def blacklist_staff(id):
-    staff = User.query.get_or_404(id)
+    staff = User.objects(id=id).first()
+    if not staff: abort(404)
     staff.status = "blacklisted"
-    db.session.commit()
+    staff.save()
     flash("Staff blacklisted.", "warning")
     return redirect(url_for("admin.staff"))
 
-
-@admin.route("/staff/unblacklist/<int:id>")
+@admin.route("/staff/unblacklist/<id>")
 @login_required
 @admin_required
 def unblacklist_staff(id):
-    staff = User.query.get_or_404(id)
+    staff = User.objects(id=id).first()
+    if not staff: abort(404)
     staff.status = "approved"
-    db.session.commit()
+    staff.save()
     flash("Staff restored successfully.", "success")
     return redirect(url_for("admin.staff"))
-
 
 @admin.route("/treks")
 @login_required
@@ -161,17 +134,10 @@ def unblacklist_staff(id):
 def treks():
     search = request.args.get("search", "")
     if search:
-        treks = Trek.query.filter(
-            Trek.name.contains(search)
-        ).all()
+        treks = Trek.objects(name__icontains=search)
     else:
-        treks = Trek.query.all()
-    return render_template(
-        "admin/treks.html",
-        treks=treks,
-        search=search
-    )
-
+        treks = Trek.objects()
+    return render_template("admin/treks.html", treks=treks, search=search)
 
 @admin.route("/treks/add", methods=["GET", "POST"])
 @login_required
@@ -188,19 +154,12 @@ def add_trek():
         end_date_str = request.form.get("end_date", "")
         description = request.form.get("description", "").strip()
 
-        # Construct dummy object to return to form on failure
         temp_trek = DummyTrek(
-            name=name,
-            location=location,
-            difficulty=difficulty,
-            duration=duration_str,
-            total_slots=total_slots_str,
-            available_slots=available_slots_str,
-            start_date=start_date_str,
-            end_date=end_date_str,
-            description=description
+            name=name, location=location, difficulty=difficulty,
+            duration=duration_str, total_slots=total_slots_str,
+            available_slots=available_slots_str, start_date=start_date_str,
+            end_date=end_date_str, description=description
         )
-
         if not name:
             flash("Trek Name cannot be empty.", "danger")
             return render_template("admin/trek_form.html", trek=temp_trek)
@@ -236,13 +195,13 @@ def add_trek():
             return render_template("admin/trek_form.html", trek=temp_trek)
 
         try:
-            start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
         except ValueError:
             flash("Invalid date format. Use YYYY-MM-DD.", "danger")
             return render_template("admin/trek_form.html", trek=temp_trek)
 
-        if start_date < date.today():
+        if start_date.date() < date.today():
             flash("Start Date cannot be in the past.", "danger")
             return render_template("admin/trek_form.html", trek=temp_trek)
         if end_date <= start_date:
@@ -253,59 +212,45 @@ def add_trek():
             return render_template("admin/trek_form.html", trek=temp_trek)
 
         trek = Trek(
-            name=name,
-            location=location,
-            difficulty=difficulty,
-            duration=duration,
-            total_slots=total_slots,
-            available_slots=available_slots,
-            start_date=start_date,
-            end_date=end_date,
-            description=description
+            name=name, location=location, difficulty=difficulty,
+            duration=duration, total_slots=total_slots,
+            available_slots=available_slots, start_date=start_date,
+            end_date=end_date, description=description
         )
-        db.session.add(trek)
-        db.session.commit()
+        trek.save()
         flash("Trek added successfully.", "success")
         return redirect(url_for("admin.treks"))
-    return render_template(
-        "admin/trek_form.html",
-        trek=None
-    )
+    return render_template("admin/trek_form.html", trek=None)
 
-@admin.route("/treks/assign/<int:id>", methods=["GET", "POST"])
+@admin.route("/treks/assign/<id>", methods=["GET", "POST"])
 @login_required
 @admin_required
 def assign_staff(id):
-    trek = Trek.query.get_or_404(id)
-    staff_list = User.query.filter_by(
-        role="staff",
-        status="approved"
-    ).all()
+    trek = Trek.objects(id=id).first()
+    if not trek: abort(404)
+    staff_list = User.objects(role="staff", status="approved")
 
     if request.method == "POST":
         staff_id = request.form.get("staff_id")
         if staff_id:
-            trek.assigned_staff = int(staff_id)
+            staff_user = User.objects(id=staff_id).first()
+            trek.assigned_staff = staff_user
         else:
             trek.assigned_staff = None
-
-        db.session.commit()
+        trek.save()
         flash("Staff assigned successfully.", "success")
         return redirect(url_for("admin.treks"))
 
-    return render_template(
-        "admin/assign_staff.html",
-        trek=trek,
-        staff_list=staff_list
-    )
+    return render_template("admin/assign_staff.html", trek=trek, staff_list=staff_list)
 
 
-@admin.route("/treks/edit/<int:id>", methods=["GET", "POST"])
+@admin.route("/treks/edit/<id>", methods=["GET", "POST"])
 @login_required
 @admin_required
 def edit_trek(id):
-    trek = Trek.query.get_or_404(id)
-    booked_slots = Booking.query.filter_by(trek_id=trek.id, status="Booked").count()
+    trek = Trek.objects(id=id).first()
+    if not trek: abort(404)
+    booked_slots = Booking.objects(trek_id=trek.id, status="Booked").count()
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         location = request.form.get("location", "").strip()
@@ -318,16 +263,10 @@ def edit_trek(id):
         description = request.form.get("description", "").strip()
 
         temp_trek = DummyTrek(
-            id=trek.id,
-            name=name,
-            location=location,
-            difficulty=difficulty,
-            duration=duration_str,
-            total_slots=total_slots_str,
-            available_slots=available_slots_str,
-            start_date=start_date_str,
-            end_date=end_date_str,
-            description=description
+            id=str(trek.id), name=name, location=location, difficulty=difficulty,
+            duration=duration_str, total_slots=total_slots_str,
+            available_slots=available_slots_str, start_date=start_date_str,
+            end_date=end_date_str, description=description
         )
 
         if not name:
@@ -374,8 +313,8 @@ def edit_trek(id):
             return render_template("admin/trek_form.html", trek=temp_trek, booked_slots=booked_slots)
 
         try:
-            start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
         except ValueError:
             flash("Invalid date format. Use YYYY-MM-DD.", "danger")
             return render_template("admin/trek_form.html", trek=temp_trek, booked_slots=booked_slots)
@@ -387,7 +326,7 @@ def edit_trek(id):
             flash(f"Duration must match the difference between Start and End dates ({(end_date - start_date).days} days).", "danger")
             return render_template("admin/trek_form.html", trek=temp_trek, booked_slots=booked_slots)
 
-        if start_date != trek.start_date and start_date < date.today():
+        if start_date != trek.start_date and start_date.date() < date.today():
             flash("New Start Date cannot be in the past.", "danger")
             return render_template("admin/trek_form.html", trek=temp_trek, booked_slots=booked_slots)
 
@@ -400,50 +339,42 @@ def edit_trek(id):
         trek.start_date = start_date
         trek.end_date = end_date
         trek.description = description
-        db.session.commit()
+        trek.save()
         flash("Trek updated successfully.", "success")
         return redirect(url_for("admin.treks"))
-    return render_template(
-        "admin/trek_form.html",
-        trek=trek,
-        booked_slots=booked_slots
-    )
+    return render_template("admin/trek_form.html", trek=trek, booked_slots=booked_slots)
 
-
-@admin.route("/treks/delete/<int:id>")
+@admin.route("/treks/delete/<id>")
 @login_required
 @admin_required
 def delete_trek(id):
-    trek = Trek.query.get_or_404(id)
+    trek = Trek.objects(id=id).first()
+    if not trek: abort(404)
     trek.is_deleted = True
-    db.session.commit()
+    trek.save()
     flash("Trek removed.", "warning")
     return redirect(url_for("admin.treks"))
 
-
-@admin.route("/treks/restore/<int:id>")
+@admin.route("/treks/restore/<id>")
 @login_required
 @admin_required
 def restore_trek(id):
-    trek = Trek.query.get_or_404(id)
+    trek = Trek.objects(id=id).first()
+    if not trek: abort(404)
     trek.is_deleted = False
-    db.session.commit()
+    trek.save()
     flash("Trek restored.", "success")
     return redirect(url_for("admin.treks"))
+
 @admin.route("/bookings")
 @login_required
 @admin_required
 def bookings():
     search = request.args.get("search", "")
     if search:
-        bookings = Booking.query.join(User, Booking.user_id == User.id).join(Trek, Booking.trek_id == Trek.id).filter(
-            (User.name.contains(search)) |
-            (Trek.name.contains(search))
-        ).order_by(Booking.booking_date.desc()).all()
+        matching_users = User.objects(name__icontains=search)
+        matching_treks = Trek.objects(name__icontains=search)
+        bookings = Booking.objects(Q(user_id__in=matching_users) | Q(trek_id__in=matching_treks)).order_by('-booking_date')
     else:
-        bookings = Booking.query.order_by(Booking.booking_date.desc()).all()
-    return render_template(
-        "admin/bookings.html",
-        bookings=bookings,
-        search=search
-    )
+        bookings = Booking.objects.order_by('-booking_date')
+    return render_template("admin/bookings.html", bookings=bookings, search=search)

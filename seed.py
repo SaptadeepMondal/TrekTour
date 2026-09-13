@@ -2,16 +2,13 @@ import random
 from datetime import date, datetime, timedelta
 from werkzeug.security import generate_password_hash
 from app import app
-from models import db, User, Trek, Booking
+from models import User, Trek, Booking
 
 
 with app.app_context():
-    Booking.query.delete()
-    Trek.query.delete()
-    User.query.filter(
-        User.role != "admin"
-    ).delete()
-    db.session.commit()
+    Booking.objects().delete()
+    Trek.objects().delete()
+    User.objects(role__ne="admin").delete()
     print("Old data cleared.")
 
     staff_names = [
@@ -33,10 +30,9 @@ with app.app_context():
             role="staff",
             status="approved"
         )
-        db.session.add(staff)
+        staff.save()
         staff_members.append(staff)
 
-    db.session.commit()
     print("Staff Created")
 
 
@@ -59,9 +55,9 @@ with app.app_context():
             role="user",
             status="approved"
         )
-        db.session.add(user)
+        user.save()
         users.append(user)
-    db.session.commit()
+    
     print("Users Created")
 
 
@@ -82,7 +78,7 @@ with app.app_context():
     treks = []
     for i, trek in enumerate(trek_data):
         total = random.randint(20, 40)
-        start = date.today() + timedelta(days=random.randint(5, 90))
+        start = datetime.utcnow() + timedelta(days=random.randint(5, 90))
         end = start + timedelta(days=random.randint(2, 8))
         obj = Trek(
             name=trek[0],
@@ -91,16 +87,16 @@ with app.app_context():
             duration=(end - start).days,
             total_slots=total,
             available_slots=total,
-            assigned_staff=random.choice(staff_members).id,
+            assigned_staff=random.choice(staff_members),
             start_date=start,
             end_date=end,
             status="Open",
             description=f"Experience the beauty of {trek[0]}."
 
         )
-        db.session.add(obj)
+        obj.save()
         treks.append(obj)
-    db.session.commit()
+    
     print("Treks Created")
 
 
@@ -116,9 +112,9 @@ with app.app_context():
                 continue
 
             booking = Booking(
-                user_id=user.id,
-                trek_id=trek.id,
-                booking_date=datetime.now() - timedelta(
+                user_id=user,
+                trek_id=trek,
+                booking_date=datetime.utcnow() - timedelta(
                     days=random.randint(1, 30)
                 ),
                 number_of_people=1,
@@ -126,7 +122,8 @@ with app.app_context():
             )
 
             trek.available_slots -= 1
-            db.session.add(booking)
-    db.session.commit()
+            trek.save()
+            booking.save()
+            
     print("Bookings Created")
     print("\nDatabase Seeded Successfully!")

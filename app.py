@@ -2,13 +2,13 @@ from flask import Flask
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
 from config import Config
-from models import db, User
+from models import User
 from routes import auth, admin, staff, user, api
-
+from mongoengine import connect
 
 app = Flask(__name__)
 app.config.from_object(Config)
-db.init_app(app)
+connect(host=app.config['MONGODB_SETTINGS']['host'])
 
 
 
@@ -19,7 +19,7 @@ login_manager.login_view = "auth.login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User.objects(id=user_id).first()
 
 
 
@@ -32,8 +32,7 @@ app.register_blueprint(api)
 
 
 with app.app_context():
-    db.create_all()
-    admin_user = User.query.filter_by(role="admin").first()
+    admin_user = User.objects(role="admin").first()
     if not admin_user:
         admin_user = User(
             username="admin",
@@ -45,8 +44,7 @@ with app.app_context():
             status="approved"
         )
 
-        db.session.add(admin_user)
-        db.session.commit()
+        admin_user.save()
         print("Default Admin Created")
 
 

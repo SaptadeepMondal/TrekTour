@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User
+from models import User
 
 auth = Blueprint("auth", __name__)
 
@@ -26,7 +26,7 @@ def login():
     if request.method == "POST":
         username = request.form["username"].strip()
         password = request.form["password"]
-        user = User.query.filter_by(username=username).first()
+        user = User.objects(username=username).first()
         if user and check_password_hash(user.password, password):
             if user.status == "blacklisted":
                 flash("Your account has been blacklisted by the administrator.", "danger")
@@ -70,10 +70,10 @@ def register():
         if len(password) < 6:
             flash("Password must be at least 6 characters.", "danger")
             return redirect(url_for("auth.register"))
-        if User.query.filter_by(username=username).first():
+        if User.objects(username=username).first():
             flash("Username already exists.", "danger")
             return redirect(url_for("auth.register"))
-        if User.query.filter_by(email=email).first():
+        if User.objects(email=email).first():
             flash("Email already registered.", "danger")
             return redirect(url_for("auth.register"))
         status = "pending" if role == "staff" else "approved"
@@ -86,8 +86,7 @@ def register():
             role=role,
             status=status
         )
-        db.session.add(new_user)
-        db.session.commit()
+        new_user.save()
         flash("Registration successful! Please login.","success")
         return redirect(url_for("auth.login"))
     return render_template("auth/register.html")
