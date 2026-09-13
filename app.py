@@ -8,7 +8,13 @@ from mongoengine import connect
 
 app = Flask(__name__)
 app.config.from_object(Config)
-connect(host=app.config['MONGODB_SETTINGS']['host'])
+
+# Safely connect to MongoDB
+mongo_uri = app.config['MONGODB_SETTINGS']['host']
+if mongo_uri:
+    connect(host=mongo_uri)
+else:
+    print("WARNING: MONGODB_URI is not set. Database connection will fail.")
 
 
 
@@ -31,21 +37,8 @@ app.register_blueprint(api)
 
 
 
-with app.app_context():
-    admin_user = User.objects(role="admin").first()
-    if not admin_user:
-        admin_user = User(
-            username="admin",
-            name="Administrator",
-            email="admin@trek.com",
-            phone="9999999999",
-            password=generate_password_hash("admin123"),
-            role="admin",
-            status="approved"
-        )
+# Admin creation should be done via a script, not on every lambda cold start
 
-        admin_user.save()
-        print("Default Admin Created")
 
 
 if __name__ == "__main__":
