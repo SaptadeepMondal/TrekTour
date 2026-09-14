@@ -3,56 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrekTour</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>TrekTour | Plot Your Expedition</title>
+    <!-- Use a mono font for coordinates/data and a bold sans-serif for headings -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="topo-theme">
+<!--
+THESIS: Geography leads the experience. The interface is an interactive map first, data second.
+OWN-WORLD: Topographic contour lines as background textures, desaturated earth tones (sage green, slate gray), precise coordinate-style typography.
+STORY: The visitor feels like a navigator plotting their next major expedition.
+FIRST VIEWPORT: A massive, full-viewport stylized map visualization where treks are plotted as waypoints, rather than a traditional list of cards.
+FORM: Impeccable's Pick (Topographic Map) - seed key 7d1e0eda
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->
 
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-white fs-4" href="{{ url_for('auth.index') }}">
-            TrekTour
+<nav class="topo-nav">
+    <div class="nav-container">
+        <a class="brand-logo" href="{{ url_for('auth.index') }}">
+            <span class="coord">45°N 12°E</span> TREKTOUR
         </a>
-        <div>
-            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light me-2 px-4">
-                Login
-            </a>
-            <a href="{{ url_for('auth.register') }}" class="btn btn-light px-4" style="color: var(--primary); font-weight: 600;">
-                Register
-            </a>
+        <div class="nav-actions">
+            <a href="{{ url_for('auth.login') }}" class="btn-ghost">Access Log</a>
+            <a href="{{ url_for('auth.register') }}" class="btn-solid">Issue Permit</a>
         </div>
     </div>
 </nav>
 
-<main class="main-content container my-5">
-    <section class="hero shadow-lg p-5 text-white position-relative overflow-hidden">
-        <div class="container py-5 max-w-600 ms-lg-5">
-            <h1 class="display-3 fw-bold mb-3" style="letter-spacing: -0.03em; line-height: 1.1;">
-                Explore Nature's Greatest Trails
-            </h1>
-            <p class="lead mb-4 text-white-50" style="font-weight: 400; font-size: 1.25rem;">
-                Discover breathtaking routes, connect with certified trek guides, and book your next adventure seamlessly.
-            </p>
-            <div class="d-flex flex-wrap gap-3">
-                <a href="{{ url_for('auth.register') }}" class="btn btn-lg btn-custom px-4 py-3 fw-semibold">
-                    Get Started
-                </a>
-                <a href="{{ url_for('auth.login') }}" class="btn btn-lg btn-outline-light px-4 py-3 fw-semibold">
-                    Member Login
-                </a>
+<main class="map-viewport">
+    <!-- Topographic SVG Background injected via CSS -->
+    <div class="topo-overlay"></div>
+    
+    <div class="waypoint-container">
+        <div class="waypoint-card main-waypoint">
+            <div class="waypoint-header">
+                <span class="elevation-tag">ELEV. 5,364M</span>
+                <span class="status-dot live"></span>
             </div>
+            <h1 class="waypoint-title">Everest Base Camp</h1>
+            <p class="waypoint-desc">The ultimate high-altitude test. Navigate khumbu icefalls and legendary sherpa trails.</p>
+            <div class="waypoint-metrics">
+                <div class="metric">
+                    <span class="metric-label">DURATION</span>
+                    <span class="metric-value">14 DAYS</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">DIFFICULTY</span>
+                    <span class="metric-value">EXTREME</span>
+                </div>
+            </div>
+            <a href="{{ url_for('auth.register') }}" class="btn-waypoint">Plot Course &rarr;</a>
         </div>
-    </section>
+        
+        <!-- Secondary Waypoints as visual markers -->
+        <div class="marker marker-1">
+            <div class="marker-dot"></div>
+            <span class="marker-label">Annapurna Circuit</span>
+        </div>
+        
+        <div class="marker marker-2">
+            <div class="marker-dot"></div>
+            <span class="marker-label">Inca Trail</span>
+        </div>
+        
+        <div class="marker marker-3">
+            <div class="marker-dot"></div>
+            <span class="marker-label">Kilimanjaro</span>
+        </div>
+    </div>
 </main>
 
-<footer class="text-center py-4 border-top mt-auto bg-white">
-    <div class="container text-muted small">
-        &copy; 2026 TrekTour. All rights reserved.
+<footer class="topo-footer">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <span class="system-status">SYS.OP. NORMAL</span>
+        </div>
+        <div class="footer-col text-right">
+            &copy; 2026 TrekTour. All coordinates mapped.
+        </div>
     </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
