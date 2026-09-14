@@ -3,83 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrekTour | Plot Your Expedition</title>
-    <!-- Use a mono font for coordinates/data and a bold sans-serif for headings -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow:wght@500;700;900&display=swap" rel="stylesheet">
+    <title>TrekTour | Advanced Expedition Management</title>
+    <!-- Inter and JetBrains Mono for a highly technical, readable SaaS aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="topo-theme">
-<!--
-THESIS: Geography leads the experience. The interface is an interactive map first, data second.
-OWN-WORLD: Topographic contour lines as background textures, desaturated earth tones (sage green, slate gray), precise coordinate-style typography.
-STORY: The visitor feels like a navigator plotting their next major expedition.
-FIRST VIEWPORT: A massive, full-viewport stylized map visualization where treks are plotted as waypoints, rather than a traditional list of cards.
-FORM: Impeccable's Pick (Topographic Map) - seed key 7d1e0eda
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
--->
+<body>
 
-<nav class="topo-nav">
-    <div class="nav-container">
-        <a class="brand-logo" href="{{ url_for('auth.index') }}">
-            <span class="coord">45°N 12°E</span> TREKTOUR
+<header class="nav-header">
+    <div class="container nav-content">
+        <a href="{{ url_for('auth.index') }}" class="brand">
+            <span class="brand-dot"></span> TrekTour
         </a>
         <div class="nav-actions">
-            <a href="{{ url_for('auth.login') }}" class="btn-ghost">Access Log</a>
-            <a href="{{ url_for('auth.register') }}" class="btn-solid">Issue Permit</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Get Started</a>
         </div>
     </div>
-</nav>
+</header>
 
-<main class="map-viewport">
-    <!-- Topographic SVG Background injected via CSS -->
-    <div class="topo-overlay"></div>
-    
-    <div class="waypoint-container">
-        <div class="waypoint-card main-waypoint">
-            <div class="waypoint-header">
-                <span class="elevation-tag">ELEV. 5,364M</span>
-                <span class="status-dot live"></span>
-            </div>
-            <h1 class="waypoint-title">Everest Base Camp</h1>
-            <p class="waypoint-desc">The ultimate high-altitude test. Navigate khumbu icefalls and legendary sherpa trails.</p>
-            <div class="waypoint-metrics">
-                <div class="metric">
-                    <span class="metric-label">DURATION</span>
-                    <span class="metric-value">14 DAYS</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">DIFFICULTY</span>
-                    <span class="metric-value">EXTREME</span>
+<main>
+    <!-- HERO SECTION (Split screen, left text, right image) -->
+    <section class="hero container">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <span class="hero-eyebrow">v2.0 Early Access</span>
+                <h1 class="hero-title">Manage complex expeditions with precision.</h1>
+                <p class="hero-subtext">Coordinate guides, track waypoints, and manage bookings from a single, high-performance command center.</p>
+                <div class="hero-actions">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">Get Started</a>
                 </div>
             </div>
-            <a href="{{ url_for('auth.register') }}" class="btn-waypoint">Plot Course &rarr;</a>
+            <div class="hero-image-container">
+                <img src="{{ url_for('static', filename='img/hero_terrain.jpg') }}" alt="Dark mode 3D terrain map showing expedition routing" class="hero-image">
+            </div>
         </div>
-        
-        <!-- Secondary Waypoints as visual markers -->
-        <div class="marker marker-1">
-            <div class="marker-dot"></div>
-            <span class="marker-label">Annapurna Circuit</span>
+    </section>
+
+    <!-- BENTO GRID SECTION (Features) -->
+    <section class="section-features">
+        <div class="container">
+            <div class="section-header">
+                <!-- No eyebrow here, adhering to the 1 per 3 sections rule -->
+                <h2 class="section-title">Built for scale.</h2>
+            </div>
+            
+            <div class="bento-grid">
+                <div class="bento-card large">
+                    <div>
+                        <div class="card-icon">
+                            <!-- SVG placeholder for a Map/Routing icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                        </div>
+                        <h3 class="card-title">Real-time routing</h3>
+                        <p class="card-desc">Plot and adjust expedition coordinates instantly. Changes sync to all guide devices offline.</p>
+                    </div>
+                </div>
+                
+                <div class="bento-card">
+                    <div>
+                        <div class="card-icon">
+                            <!-- SVG placeholder for Users icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <h3 class="card-title">Permit tracking</h3>
+                        <p class="card-desc">Automate permit compliance checks before any trekker leaves base camp.</p>
+                    </div>
+                </div>
+
+                <div class="bento-card">
+                    <div>
+                        <div class="card-icon">
+                            <!-- SVG placeholder for Cloud/Sync icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
+                        </div>
+                        <h3 class="card-title">Offline capable</h3>
+                        <p class="card-desc">Full access to manifests and emergency protocols, even without cell service.</p>
+                    </div>
+                </div>
+
+                <div class="bento-card large">
+                    <div>
+                        <div class="card-icon">
+                            <!-- SVG placeholder for Shield/Security icon -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                        <h3 class="card-title">Enterprise security</h3>
+                        <p class="card-desc">End-to-end encryption for passport data, health declarations, and billing information.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="marker marker-2">
-            <div class="marker-dot"></div>
-            <span class="marker-label">Inca Trail</span>
-        </div>
-        
-        <div class="marker marker-3">
-            <div class="marker-dot"></div>
-            <span class="marker-label">Kilimanjaro</span>
-        </div>
-    </div>
+    </section>
 </main>
 
-<footer class="topo-footer">
-    <div class="footer-grid">
-        <div class="footer-col">
-            <span class="system-status">SYS.OP. NORMAL</span>
+<footer class="footer">
+    <div class="container footer-content">
+        <div>
+            <span>&copy; 2026 TrekTour.</span>
         </div>
-        <div class="footer-col text-right">
-            &copy; 2026 TrekTour. All coordinates mapped.
+        <div class="mono">
+            <span>SYS_STATUS: OPTIMAL</span>
         </div>
     </div>
 </footer>
