@@ -10,9 +10,10 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 # Safely connect to MongoDB
+import certifi
 mongo_uri = app.config['MONGODB_SETTINGS']['host']
 if mongo_uri:
-    connect(host=mongo_uri)
+    connect(host=mongo_uri, tlsCAFile=certifi.where())
 else:
     print("WARNING: MONGODB_URI is not set. Database connection will fail.")
 
