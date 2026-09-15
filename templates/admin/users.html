@@ -5,23 +5,23 @@
 {% block content %}
 <div class="row align-items-center mb-4">
     <div class="col-md-6">
-        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">Users Management</h2>
-        <p class="text-muted mb-0">View registered trekkers and manage accounts status.</p>
+        <h2 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">Users Management</h2>
+        <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">View registered trekkers and manage accounts status.</p>
     </div>
     <div class="col-md-6 mt-3 mt-md-0">
         <form method="GET" class="d-flex justify-content-md-end">
             <div class="input-group" style="max-width: 350px;">
-                <input type="text" name="search" class="form-control" placeholder="Search by name..." value="{{ search }}">
+                <input type="text" name="search" class="form-control" placeholder="Search by name..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 bg-white">
-            <thead class="table-light">
+<div class="card admin-card">
+    <div class="table-responsive admin-table-container">
+        <table class="table admin-table">
+            <thead>
                 <tr>
                     <th class="ps-4">ID</th>
                     <th>Name</th>
@@ -35,33 +35,33 @@
             <tbody>
             {% for user in users %}
                 <tr>
-                    <td class="ps-4 text-muted fw-semibold">#{{ user.id }}</td>
-                    <td class="fw-semibold">{{ user.name }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.phone or '-' }}</td>
+                    <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">#{{ user.id }}</td>
+                    <td class="fw-medium">{{ user.name }}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.875rem;">{{ user.username }}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ user.email }}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ user.phone or '-' }}</td>
                     <td>
                         {% if user.status == "approved" %}
-                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <span class="badge badge-custom bg-success text-white">
                                 Approved
                             </span>
                         {% elif user.status == "blacklisted" %}
-                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                            <span class="badge badge-custom bg-danger text-white">
                                 Blacklisted
                             </span>
                         {% else %}
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle text-dark">
+                            <span class="badge badge-custom bg-warning text-dark">
                                 {{ user.status|capitalize }}
                             </span>
                         {% endif %}
                     </td>
                     <td class="text-end pe-4">
                         {% if user.status == "approved" %}
-                            <a href="{{ url_for('admin.blacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-danger">
+                            <a href="{{ url_for('admin.blacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-danger" style="font-weight: 500;">
                                 Blacklist
                             </a>
                         {% else %}
-                            <a href="{{ url_for('admin.unblacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-success">
+                            <a href="{{ url_for('admin.unblacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-success" style="font-weight: 500;">
                                 Restore
                             </a>
                         {% endif %}
@@ -69,7 +69,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7" class="text-center py-4 text-muted">
+                    <td colspan="7" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
                         No users found matching your search.
                     </td>
                 </tr>

@@ -4,23 +4,23 @@
 
 <div class="row align-items-center mb-4">
     <div class="col-md-6">
-        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">Staff Management</h2>
-        <p class="text-muted mb-0">Approve guide registration requests and track their status.</p>
+        <h2 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">Staff Management</h2>
+        <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Approve guide registration requests and track their status.</p>
     </div>
     <div class="col-md-6 mt-3 mt-md-0">
         <form method="GET" class="d-flex justify-content-md-end">
             <div class="input-group" style="max-width: 350px;">
-                <input type="text" name="search" class="form-control" placeholder="Search staff by name..." value="{{ search }}">
+                <input type="text" name="search" class="form-control" placeholder="Search staff by name..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 bg-white">
-            <thead class="table-light">
+<div class="card admin-card">
+    <div class="table-responsive admin-table-container">
+        <table class="table admin-table">
+            <thead>
                 <tr>
                     <th class="ps-4">ID</th>
                     <th>Name</th>
@@ -34,40 +34,40 @@
             <tbody>
             {% for member in staff %}
                 <tr>
-                    <td class="ps-4 text-muted fw-semibold">#{{ member.id }}</td>
-                    <td class="fw-semibold">{{ member.name }}</td>
-                    <td>{{ member.username }}</td>
-                    <td>{{ member.email }}</td>
-                    <td>{{ member.phone or '-' }}</td>
+                    <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">#{{ member.id }}</td>
+                    <td class="fw-medium">{{ member.name }}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.875rem;">{{ member.username }}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ member.email }}</td>
+                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ member.phone or '-' }}</td>
                     <td>
                         {% if member.status == "approved" %}
-                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <span class="badge badge-custom bg-success text-white">
                                 Approved
                             </span>
                         {% elif member.status == "pending" %}
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle text-dark">
-                                Pending Approval
+                            <span class="badge badge-custom text-dark" style="background-color: #facc15;">
+                                Pending
                             </span>
                         {% elif member.status == "blacklisted" %}
-                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                            <span class="badge badge-custom bg-danger text-white">
                                 Blacklisted
                             </span>
                         {% endif %}
                     </td>
                     <td class="text-end pe-4">
                         {% if member.status == "pending" %}
-                            <a href="{{ url_for('admin.approve_staff', id=member.id) }}" class="btn btn-sm btn-success text-white fw-semibold me-1">
+                            <a href="{{ url_for('admin.approve_staff', id=member.id) }}" class="btn btn-sm btn-primary fw-semibold me-1">
                                 Approve
                             </a>
-                            <a href="{{ url_for('admin.blacklist_staff', id=member.id) }}" class="btn btn-sm btn-outline-danger">
+                            <a href="{{ url_for('admin.blacklist_staff', id=member.id) }}" class="btn btn-sm btn-outline-danger fw-semibold">
                                 Reject
                             </a>
                         {% elif member.status == "approved" %}
-                            <a href="{{ url_for('admin.blacklist_staff', id=member.id) }}" class="btn btn-sm btn-outline-danger">
+                            <a href="{{ url_for('admin.blacklist_staff', id=member.id) }}" class="btn btn-sm btn-outline-danger fw-semibold">
                                 Blacklist
                             </a>
                         {% elif member.status == "blacklisted" %}
-                            <a href="{{ url_for('admin.unblacklist_staff', id=member.id) }}" class="btn btn-sm btn-outline-success">
+                            <a href="{{ url_for('admin.unblacklist_staff', id=member.id) }}" class="btn btn-sm btn-outline-success fw-semibold">
                                 Restore
                             </a>
                         {% endif %}
@@ -75,7 +75,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7" class="text-center py-4 text-muted">
+                    <td colspan="7" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
                         No staff members found matching your search.
                     </td>
                 </tr>

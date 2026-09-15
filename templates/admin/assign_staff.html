@@ -4,22 +4,28 @@
 
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header py-3 bg-white">
-                <h4 class="mb-0 fw-bold" style="color: var(--primary)">Assign Trek Staff</h4>
+        <div class="card admin-card">
+            <div class="card-header admin-card-header">
+                <h4 class="mb-0 fw-bold" style="color: var(--text-main)">Assign Trek Staff</h4>
             </div>
 
             <div class="card-body p-4">
-                <div class="mb-4 p-3 bg-light rounded border">
-                    <p class="mb-2"><strong>Trek:</strong> {{ trek.name }}</p>
-                    <p class="mb-2"><strong>Location:</strong> {{ trek.location }}</p>
-                    <p class="mb-0"><strong>Difficulty:</strong> {{ trek.difficulty }}</p>
+                <div class="mb-4 p-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
+                    <p class="mb-2" style="font-family: var(--font-mono); font-size: 0.875rem;">
+                        <strong style="color: var(--text-muted);">TREK:</strong> <span style="color: var(--text-main);">{{ trek.name }}</span>
+                    </p>
+                    <p class="mb-2" style="font-family: var(--font-mono); font-size: 0.875rem;">
+                        <strong style="color: var(--text-muted);">LOCATION:</strong> <span style="color: var(--text-main);">{{ trek.location }}</span>
+                    </p>
+                    <p class="mb-0" style="font-family: var(--font-mono); font-size: 0.875rem;">
+                        <strong style="color: var(--text-muted);">DIFFICULTY:</strong> <span style="color: var(--text-main);">{{ trek.difficulty }}</span>
+                    </p>
                 </div>
 
                 <form method="POST">
                     <div class="mb-4">
-                        <label class="form-label fw-semibold">Select Trek Guide / Staff</label>
-                        <select name="staff_id" class="form-select">
+                        <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Select Trek Guide / Staff</label>
+                        <select name="staff_id" class="form-control" style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main);">
                             <option value="">-- Unassign Staff (No Guide) --</option>
                             {% for staff in staff_list %}
                                 <option value="{{ staff.id }}" {% if trek.assigned_staff == staff.id %}selected{% endif %}>
@@ -30,10 +36,10 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-custom px-4 fw-semibold">
+                        <button type="submit" class="btn btn-primary px-4 fw-semibold w-100">
                             Save Assignment
                         </button>
-                        <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary px-4">
+                        <a href="{{ url_for('admin.treks') }}" class="btn btn-ghost px-4 w-100">
                             Cancel
                         </a>
                     </div>
