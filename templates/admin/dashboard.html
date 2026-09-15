@@ -1,151 +1,153 @@
 {% extends "admin/base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<div class="row align-items-center mb-5">
-    <div class="col-12">
-        <h2 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.03em;">Command Center</h2>
-        <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">System overview and expedition metrics.</p>
+<div class="row align-items-end mb-5 border-bottom border-secondary pb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.03em; font-size: 2.5rem;">Command Center</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">
+            SYS_TIME: <span class="text-white clock-display"></span> | ENV: PRODUCTION
+        </p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="{{ url_for('admin.add_trek') }}" class="btn btn-primary fw-semibold px-4 py-2 text-uppercase font-monospace text-xs">
+            <i class="ph ph-rocket-launch me-2"></i> Deploy Route
+        </a>
     </div>
 </div>
 
 <div class="row g-4 mb-5">
     <div class="col-md-3">
-        <div class="card admin-card h-100">
-            <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
-                <h6 class="text-uppercase fw-semibold small mb-3" style="color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em;">Total Trekkers</h6>
-                <h2 class="display-5 fw-bold mb-0" style="color: var(--text-main);">{{ total_users }}</h2>
+        <div class="bento-metric h-100">
+            <div>
+                <h6 class="text-uppercase small mb-4" style="color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em;">
+                    <i class="ph ph-users fs-5 align-middle me-2"></i>Trekkers
+                </h6>
+                <h2 class="display-4 fw-bold mb-0" style="color: var(--text-main); font-family: var(--font-mono);">{{ total_users }}</h2>
             </div>
         </div>
     </div>
 
     <div class="col-md-3">
-        <div class="card admin-card h-100">
-            <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
-                <h6 class="text-uppercase fw-semibold small mb-3" style="color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em;">Trek Staff</h6>
-                <h2 class="display-5 fw-bold mb-0" style="color: var(--text-main);">{{ total_staff }}</h2>
+        <div class="bento-metric h-100">
+            <div>
+                <h6 class="text-uppercase small mb-4" style="color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em;">
+                    <i class="ph ph-identification-badge fs-5 align-middle me-2"></i>Staff
+                </h6>
+                <h2 class="display-4 fw-bold mb-0" style="color: var(--text-main); font-family: var(--font-mono);">{{ total_staff }}</h2>
             </div>
         </div>
     </div>
 
     <div class="col-md-3">
-        <div class="card admin-card h-100">
-            <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
-                <h6 class="text-uppercase fw-semibold small mb-3" style="color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em;">Total Treks</h6>
-                <h2 class="display-5 fw-bold mb-0" style="color: var(--text-main);">{{ total_treks }}</h2>
+        <div class="bento-metric h-100">
+            <div>
+                <h6 class="text-uppercase small mb-4" style="color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em;">
+                    <i class="ph ph-map-trifold fs-5 align-middle me-2"></i>Routes
+                </h6>
+                <h2 class="display-4 fw-bold mb-0" style="color: var(--text-main); font-family: var(--font-mono);">{{ total_treks }}</h2>
             </div>
         </div>
     </div>
 
     <div class="col-md-3">
-        <div class="card admin-card h-100">
-            <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
-                <h6 class="text-uppercase fw-semibold small mb-3" style="color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 0.05em;">Total Bookings</h6>
-                <h2 class="display-5 fw-bold mb-0" style="color: var(--accent);">{{ total_bookings }}</h2>
+        <div class="bento-metric h-100" style="border-color: rgba(6, 182, 212, 0.4); background: rgba(6, 182, 212, 0.02);">
+            <div>
+                <h6 class="text-uppercase small mb-4" style="color: var(--accent); font-family: var(--font-mono); letter-spacing: 0.05em;">
+                    <i class="ph ph-book-bookmark fs-5 align-middle me-2"></i>Bookings
+                </h6>
+                <h2 class="display-4 fw-bold mb-0" style="color: var(--accent); font-family: var(--font-mono);">{{ total_bookings }}</h2>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mb-5">
-    <div class="col-12">
-        <div class="card admin-card">
-            <div class="card-header admin-card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0 fw-bold" style="color: var(--text-main);">Recent Bookings</h5>
-                <a href="{{ url_for('admin.bookings') }}" class="btn btn-ghost btn-sm">
-                    View All &rarr;
-                </a>
+<div class="row g-4 mb-5">
+    <div class="col-lg-8">
+        <h5 class="mb-4 fw-bold text-uppercase" style="font-family: var(--font-mono); font-size: 0.875rem; letter-spacing: 0.05em;">
+            <i class="ph ph-clock-counter-clockwise me-2 align-middle"></i>Recent Bookings
+        </h5>
+        <div class="admin-table-container">
+            <table class="table admin-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Ref</th>
+                        <th>Trekker</th>
+                        <th>Destination</th>
+                        <th>Dates</th>
+                        <th class="text-end pe-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for booking in recent_bookings %}
+                    <tr>
+                        <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ booking.id }}</td>
+                        <td class="fw-medium">{{ booking.user.name }}</td>
+                        <td class="fw-medium" style="color: var(--text-main);">{{ booking.trek.name }}</td>
+                        <td style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+                            {{ booking.trek.start_date.strftime('%d %b') if booking.trek.start_date else '-' }} &rarr; 
+                            {{ booking.trek.end_date.strftime('%d %b') if booking.trek.end_date else '-' }}
+                        </td>
+                        <td class="text-end pe-4">
+                            {% if booking.status == "Booked" %}
+                                <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                                    <span class="badge-status-dot" style="background: #4ade80;"></span> Booked
+                                </span>
+                            {% elif booking.status == "Completed" %}
+                                <span class="badge-custom badge-outline" style="color: var(--accent) !important; border-color: rgba(6, 182, 212, 0.3) !important;">
+                                    <span class="badge-status-dot" style="background: var(--accent);"></span> Completed
+                                </span>
+                            {% elif booking.status == "Cancelled" %}
+                                <span class="badge-custom badge-outline">
+                                    <span class="badge-status-dot" style="background: var(--text-muted);"></span> Cancelled
+                                </span>
+                            {% else %}
+                                <span class="badge-custom badge-outline">{{ booking.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                            No telemetry available.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-3 text-end">
+            <a href="{{ url_for('admin.bookings') }}" class="text-decoration-none" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent);">
+                VIEW ALL &rarr;
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <h5 class="mb-4 fw-bold text-uppercase" style="font-family: var(--font-mono); font-size: 0.875rem; letter-spacing: 0.05em;">
+            <i class="ph ph-warning-circle me-2 align-middle"></i>Action Required
+        </h5>
+        <div class="bento-metric h-auto">
+            <div class="mb-4">
+                <p style="color: var(--text-muted); font-size: 0.875rem;">Staff pending clearance to access manifests.</p>
+                <h1 class="display-3 fw-bold mb-0" style="color: #facc15; font-family: var(--font-mono);">
+                    {{ pending_staff }}
+                </h1>
             </div>
-            <div class="table-responsive admin-table-container">
-                <table class="table admin-table">
-                    <thead>
-                        <tr>
-                            <th class="ps-4">ID</th>
-                            <th>Trekker</th>
-                            <th>Destination</th>
-                            <th>Dates</th>
-                            <th>Booked On</th>
-                            <th>Pax</th>
-                            <th class="pe-4">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for booking in recent_bookings %}
-                        <tr>
-                            <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">#{{ booking.id }}</td>
-                            <td class="fw-medium">{{ booking.user.name }}</td>
-                            <td class="fw-medium" style="color: var(--text-main);">{{ booking.trek.name }}</td>
-                            <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">
-                                {{ booking.trek.start_date.strftime('%d %b %Y') if booking.trek.start_date else 'N/A' }} 
-                                &rarr; 
-                                {{ booking.trek.end_date.strftime('%d %b %Y') if booking.trek.end_date else 'N/A' }}
-                            </td>
-                            <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ booking.booking_date.strftime('%d-%m-%Y') if booking.booking_date }}</td>
-                            <td style="font-family: var(--font-mono); color: var(--text-main);">{{ booking.number_of_people }}</td>
-                            <td class="pe-4">
-                                {% if booking.status == "Booked" %}
-                                    <span class="badge badge-custom bg-success text-white">Booked</span>
-                                {% elif booking.status == "Completed" %}
-                                    <span class="badge badge-custom bg-info text-white">Completed</span>
-                                {% elif booking.status == "Cancelled" %}
-                                    <span class="badge badge-custom" style="background: var(--border); color: var(--text-muted);">Cancelled</span>
-                                {% else %}
-                                    <span class="badge badge-custom bg-secondary">{{ booking.status }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="7" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
-                                No bookings recorded yet.
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+            <div>
+                <a href="{{ url_for('admin.staff') }}?search=&status=pending" class="btn btn-outline-light w-100 fw-semibold" style="border-radius: 0; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.05em;">
+                    REVIEW PENDING
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-md-6">
-        <div class="card admin-card h-100">
-            <div class="card-header admin-card-header">
-                <h5 class="card-title mb-0 fw-bold">Pending Clearance</h5>
-            </div>
-            <div class="card-body p-4 d-flex flex-column justify-content-between">
-                <div>
-                    <p style="color: var(--text-muted); font-size: 0.875rem;">Staff members waiting for registration clearance before accessing manifests.</p>
-                    <h1 class="display-3 fw-bold mb-3" style="color: #facc15;">
-                        {{ pending_staff }}
-                    </h1>
-                </div>
-                <div class="mt-3">
-                    <a href="{{ url_for('admin.staff') }}?search=&status=pending" class="btn btn-primary px-4 fw-semibold">
-                        Review Registrations
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card admin-card h-100">
-            <div class="card-header admin-card-header">
-                <h5 class="card-title mb-0 fw-bold">Quick Actions</h5>
-            </div>
-            <div class="card-body p-4 d-flex flex-column justify-content-center gap-3">
-                <a href="{{ url_for('admin.add_trek') }}" class="btn btn-primary py-2 w-100">
-                    Deploy New Route
-                </a>
-                <a href="{{ url_for('admin.treks') }}" class="btn btn-ghost py-2 w-100 text-start d-flex justify-content-between">
-                    Manage Routes <span>&rarr;</span>
-                </a>
-                <a href="{{ url_for('admin.users') }}" class="btn btn-ghost py-2 w-100 text-start d-flex justify-content-between">
-                    Manage Manifests <span>&rarr;</span>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+    function updateClock() {
+        const now = new Date();
+        document.querySelector('.clock-display').textContent = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
 {% endblock %}

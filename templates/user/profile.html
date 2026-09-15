@@ -2,40 +2,47 @@
 {% block title %}My Profile{% endblock %}
 {% block content %}
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header py-3 bg-white">
-                <h4 class="mb-0 fw-bold" style="color: var(--primary)">Edit Profile Details</h4>
-            </div>
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
+    <div class="col-12">
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Profile Configuration</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Modify personal parameters and contact information.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+        <div class="admin-config-panel">
+            <h5 class="mb-4 pb-2 border-bottom border-secondary text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">User Details</h5>
             
-            <div class="card-body p-4">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Full Name</label>
-                        <input type="text" class="form-control" name="name" value="{{ current_user.name }}" required>
+            <form method="POST">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-12">
+                        <label class="admin-form-label text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Full Name</label>
+                        <input type="text" class="form-control" name="name" value="{{ current_user.name }}" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0;">
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
+                        <label class="admin-form-label text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Email Address</label>
+                        <input type="email" class="form-control" name="email" value="{{ current_user.email }}" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0;">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Email Address</label>
-                        <input type="email" class="form-control" name="email" value="{{ current_user.email }}" required>
+                    <div class="col-md-6">
+                        <label class="admin-form-label text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Phone Number</label>
+                        <input type="text" class="form-control" name="phone" value="{{ current_user.phone or '' }}" placeholder="Enter phone number" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0; font-family: var(--font-mono);">
                     </div>
+                </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold">Phone Number</label>
-                        <input type="text" class="form-control" name="phone" value="{{ current_user.phone or '' }}" placeholder="Enter phone number">
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-custom px-4 fw-semibold">
-                            Update Profile
-                        </button>
-                        <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-secondary px-4">
-                            Cancel
-                        </a>
-                    </div>
-                </form>
-            </div>
+                <div class="d-flex gap-3 justify-content-end pt-4 border-top border-secondary">
+                    <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-light px-4 text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                        Abort
+                    </a>
+                    <button type="submit" class="btn btn-primary px-5 text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                        Update Profile
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

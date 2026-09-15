@@ -2,58 +2,65 @@
 {% block title %}Participants{% endblock %}
 {% block content %}
 
-<div class="row align-items-center mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">Trekker List</h2>
-        <p class="text-muted">Registered trekkers for <strong style="color: var(--primary);">{{ trek.name }}</strong></p>
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Deployment Manifest</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Registered personnel for <strong style="color: var(--text-main);">{{ trek.name }}</strong></p>
+    </div>
+    <div class="col-md-4 mt-3 mt-md-0 d-flex justify-content-md-end">
+        <a href="{{ url_for('staff.assigned_treks') }}" class="btn btn-outline-light text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+            <i class="ph ph-arrow-left me-1"></i> Return to Roster
+        </a>
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 bg-white">
-            <thead class="table-light">
-                <tr>
-                    <th class="ps-4">Trekker Name</th>
-                    <th>Email Address</th>
-                    <th>Contact Phone</th>
-                    <th>Slots Booked</th>
-                    <th class="pe-4">Booking Status</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for booking in bookings %}
-                <tr>
-                    <td class="ps-4 fw-semibold">{{ booking.user.name }}</td>
-                    <td>{{ booking.user.email }}</td>
-                    <td>{{ booking.user.phone or '-' }}</td>
-                    <td>{{ booking.number_of_people }} Person</td>
-                    <td class="pe-4">
-                        {% if booking.status == "Booked" %}
-                            <span class="badge bg-success text-white">Booked</span>
-                        {% elif booking.status == "Completed" %}
-                            <span class="badge bg-info text-white">Completed</span>
-                        {% else %}
-                            <span class="badge bg-secondary text-white">{{ booking.status }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">
-                        No trekkers registered for this expedition yet.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div class="mt-4">
-    <a href="{{ url_for('staff.assigned_treks') }}" class="btn btn-outline-secondary">
-        &larr; Back to Assigned Treks
-    </a>
+<div class="admin-table-container">
+    <table class="table admin-table mb-0">
+        <thead>
+            <tr>
+                <th class="ps-4">Personnel ID</th>
+                <th>Name</th>
+                <th>Comms Channel</th>
+                <th>Secure Line</th>
+                <th>Party Size</th>
+                <th class="text-end pe-4">Clearance Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for booking in bookings %}
+            <tr>
+                <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ booking.user.id }}</td>
+                <td class="fw-medium">{{ booking.user.name }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem;">{{ booking.user.email }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem;">{{ booking.user.phone or 'UNLISTED' }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-main);">
+                    {{ booking.number_of_people }} <span style="color: var(--text-muted); font-weight: 500;">pax</span>
+                </td>
+                <td class="text-end pe-4">
+                    {% if booking.status == "Booked" %}
+                        <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #4ade80;"></span> Confirmed
+                        </span>
+                    {% elif booking.status == "Completed" %}
+                        <span class="badge-custom badge-outline" style="color: #06b6d4 !important; border-color: rgba(6, 182, 212, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #06b6d4;"></span> Executed
+                        </span>
+                    {% else %}
+                        <span class="badge-custom badge-outline" style="color: #a1a1aa !important; border-color: rgba(161, 161, 170, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #a1a1aa;"></span> {{ booking.status }}
+                        </span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                    No personnel cleared for this deployment.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

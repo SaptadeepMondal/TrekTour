@@ -13,7 +13,9 @@ app.config.from_object(Config)
 import certifi
 mongo_uri = app.config['MONGODB_SETTINGS']['host']
 if mongo_uri:
-    connect(host=mongo_uri, tlsCAFile=certifi.where())
+    # In serverless environments like Vercel, connect=False prevents blocking during init,
+    # and maxPoolSize=1 prevents connection exhaustion across multiple lambda instances.
+    connect(host=mongo_uri, tlsCAFile=certifi.where(), connect=False, maxPoolSize=1)
 else:
     print("WARNING: MONGODB_URI is not set. Database connection will fail.")
 

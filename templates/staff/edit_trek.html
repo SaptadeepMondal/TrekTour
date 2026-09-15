@@ -1,53 +1,59 @@
 {% extends "staff/base.html" %}
-{% block title %}Update Trek Status{% endblock %}
+{% block title %}Update Status{% endblock %}
 {% block content %}
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header py-3 bg-white">
-                <h4 class="mb-0 fw-bold" style="color: var(--primary)">Update Trek Status</h4>
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
+    <div class="col-12">
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Deployment Configuration</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Override capacity and execution status.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+        <div class="admin-config-panel">
+            <div class="mb-5 pb-4 border-bottom border-secondary">
+                <h5 class="fw-bold mb-2" style="color: var(--text-main);">{{ trek.name }}</h5>
+                <p class="text-muted small mb-0 font-monospace" style="font-size: 0.75rem;">LOC: {{ trek.location }} // CLASS: {{ trek.difficulty }} // DUR: {{ trek.duration }}D</p>
             </div>
-
-            <div class="card-body p-4">
-                <div class="mb-4 p-3 bg-light rounded border">
-                    <h5 class="fw-bold mb-1" style="color: var(--primary);">{{ trek.name }}</h5>
-                    <p class="text-muted small mb-0">{{ trek.location }} &bull; {{ trek.difficulty }} &bull; {{ trek.duration }} Days</p>
-                </div>
-
-                <form method="POST">
-                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Available Slots</label>
-                        <input type="number" min="0" max="{{ trek.total_slots - booked_slots }}" class="form-control" name="available_slots" value="{{ trek.available_slots }}" required>
+            
+            <form method="POST">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-12">
+                        <label class="admin-form-label text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Capacity Override (Slots)</label>
+                        <input type="number" min="0" max="{{ trek.total_slots - booked_slots }}" class="form-control" name="available_slots" value="{{ trek.available_slots }}" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0; font-family: var(--font-mono);">
+                        
                         {% if booked_slots > 0 %}
-                        <div class="form-text text-warning">
-                            <i class="bi bi-exclamation-triangle"></i> This trek has <strong>{{ booked_slots }}</strong> active booking(s). 
-                            Available slots cannot exceed <strong>{{ trek.total_slots - booked_slots }}</strong>.
+                        <div class="mt-2 text-warning" style="font-family: var(--font-mono); font-size: 0.75rem;">
+                            <i class="ph-fill ph-warning-circle"></i> ACTIVE BOOKINGS: <strong>{{ booked_slots }}</strong>. 
+                            MAX OVERRIDE LIMIT: <strong>{{ trek.total_slots - booked_slots }}</strong>.
                         </div>
                         {% else %}
-                        <div class="form-text">Maximum total slots configured for this trek: {{ trek.total_slots }}</div>
+                        <div class="mt-2 text-muted" style="font-family: var(--font-mono); font-size: 0.75rem;">MAX CAPACITY LIMIT: {{ trek.total_slots }}</div>
                         {% endif %}
                     </div>
+                </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold">Expedition Status</label>
-                        <select name="status" class="form-select">
-                            <option value="Open" {% if trek.status == "Open" %}selected{% endif %}>Open (Booking Active)</option>
-                            <option value="Closed" {% if trek.status == "Closed" %}selected{% endif %}>Closed (Booking Disabled)</option>
-                            <option value="Completed" {% if trek.status == "Completed" %}selected{% endif %}>Completed (Expedition Ended)</option>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-12">
+                        <label class="admin-form-label text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Execution Status</label>
+                        <select name="status" class="form-select" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); font-family: var(--font-mono); border-radius: 0;">
+                            <option value="Open" {% if trek.status == "Open" %}selected{% endif %}>OPEN (Accepting Personnel)</option>
+                            <option value="Closed" {% if trek.status == "Closed" %}selected{% endif %}>CLOSED (Manifest Locked)</option>
+                            <option value="Completed" {% if trek.status == "Completed" %}selected{% endif %}>COMPLETED (Mission Concluded)</option>
                         </select>
                     </div>
+                </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-custom px-4 fw-semibold">
-                            Save Changes
-                        </button>
-                        <a href="{{ url_for('staff.assigned_treks') }}" class="btn btn-outline-secondary px-4">
-                            Cancel
-                        </a>
-                    </div>
-                </form>
-            </div>
+                <div class="d-flex gap-3 justify-content-end pt-4 border-top border-secondary">
+                    <a href="{{ url_for('staff.assigned_treks') }}" class="btn btn-outline-light px-4 text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                        Abort
+                    </a>
+                    <button type="submit" class="btn btn-primary px-5 text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                        Commit Update
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

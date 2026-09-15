@@ -5,91 +5,100 @@
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div class="row mb-4 border-bottom border-secondary pb-4">
+    <div class="col-12">
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">
+            {% if trek %}Route Configuration: {{ trek.name }}{% else %}Deploy New Route{% endif %}
+        </h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Modify route parameters and logistics.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center mb-5">
     <div class="col-lg-8">
         <div class="card admin-card">
-            <div class="card-header admin-card-header">
-                <h4 class="mb-0 fw-bold" style="color: var(--text-main)">
-                    {% if trek %}Edit Trek: {{ trek.name }}{% else %}Add New Trek Route{% endif %}
-                </h4>
-            </div>
-
-            <div class="card-body p-4">
+            <div class="card-body p-5">
                 <form method="POST" data-is-edit="{% if trek and trek.id is defined %}true{% else %}false{% endif %}" data-booked-slots="{% if booked_slots is defined %}{{ booked_slots }}{% else %}0{% endif %}">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Trek Name</label>
-                            <input type="text" class="form-control" name="name" value="{{ trek.name if trek else '' }}" placeholder="e.g. Kedarkantha Winter Trek" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
+                    
+                    <h5 class="mb-4 pb-2 border-bottom border-secondary text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">General Information</h5>
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Route Name</label>
+                            <input type="text" class="form-control" name="name" value="{{ trek.name if trek else '' }}" placeholder="e.g. Kedarkantha" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0;">
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Location</label>
-                            <input type="text" class="form-control" name="location" value="{{ trek.location if trek else '' }}" placeholder="e.g. Uttarakhand, India" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{ trek.location if trek else '' }}" placeholder="e.g. Uttarakhand" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0;">
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Difficulty Level</label>
-                            <select class="form-control" name="difficulty" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Difficulty Level</label>
+                            <select class="form-select" name="difficulty" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0;">
                                 <option value="Easy" {% if trek and trek.difficulty=="Easy" %}selected{% endif %}>Easy</option>
                                 <option value="Moderate" {% if trek and trek.difficulty=="Moderate" %}selected{% endif %}>Moderate</option>
                                 <option value="Hard" {% if trek and trek.difficulty=="Hard" %}selected{% endif %}>Hard</option>
                             </select>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Duration (Days)</label>
-                            <input type="number" min="1" class="form-control" name="duration" value="{{ trek.duration if trek else '' }}" placeholder="e.g. 5" required readonly style="background: rgba(255,255,255,0.02); border-color: var(--border); color: var(--text-muted); cursor: not-allowed;">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Duration (Days)</label>
+                            <input type="number" min="1" class="form-control" name="duration" value="{{ trek.duration if trek else '' }}" placeholder="e.g. 5" required readonly style="background: rgba(255,255,255,0.02); border-color: var(--border); color: var(--text-muted); cursor: not-allowed; border-radius: 0; font-family: var(--font-mono);">
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Total Slots</label>
-                            <input type="number" min="1" class="form-control" name="total_slots" value="{{ trek.total_slots if trek else '' }}" placeholder="e.g. 30" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
+                    <h5 class="mb-4 pb-2 border-bottom border-secondary text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Logistics & Capacity</h5>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Total Slots</label>
+                            <input type="number" min="1" class="form-control" name="total_slots" value="{{ trek.total_slots if trek else '' }}" placeholder="e.g. 30" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0; font-family: var(--font-mono);">
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Available Slots</label>
-                            <input type="number" min="0" class="form-control" name="available_slots" value="{{ trek.available_slots if trek else '' }}" placeholder="e.g. 30" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Available Slots</label>
+                            <input type="number" min="0" class="form-control" name="available_slots" value="{{ trek.available_slots if trek else '' }}" placeholder="e.g. 30" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0; font-family: var(--font-mono);">
                         </div>
                     </div>
                     {% if booked_slots is defined and booked_slots > 0 %}
-                    <div class="row mb-3">
+                    <div class="row mb-4">
                         <div class="col-12">
-                            <div class="alert alert-warning py-2 mb-0" style="font-size: 0.9em; background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.4); color: #facc15;">
-                                <strong>Active Bookings Note:</strong> This trek has <strong>{{ booked_slots }}</strong> active booking(s). 
-                                Total slots must be at least <strong>{{ booked_slots }}</strong>. 
-                                Available slots cannot exceed <strong>{{ trek.total_slots - booked_slots }}</strong>.
+                            <div class="alert alert-warning py-3 px-4 mb-0 rounded-0" style="font-size: 0.875rem; background: rgba(234, 179, 8, 0.05); border: 1px solid rgba(234, 179, 8, 0.2); color: #facc15; font-family: var(--font-mono);">
+                                <i class="ph ph-warning-circle me-2 fs-5 align-middle"></i>
+                                <strong>Active Bookings: {{ booked_slots }}</strong><br>
+                                Total slots must be &ge; {{ booked_slots }}. Available slots &le; {{ trek.total_slots - booked_slots }}.
                             </div>
                         </div>
                     </div>
                     {% endif %}
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Start Date</label>
-                            <input type="date" class="form-control" name="start_date" value="{{ trek.start_date if trek else '' }}" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); color-scheme: dark;">
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" value="{{ trek.start_date if trek else '' }}" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); color-scheme: dark; border-radius: 0; font-family: var(--font-mono);">
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">End Date</label>
-                            <input type="date" class="form-control" name="end_date" value="{{ trek.end_date if trek else '' }}" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); color-scheme: dark;">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">End Date</label>
+                            <input type="date" class="form-control" name="end_date" value="{{ trek.end_date if trek else '' }}" required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); color-scheme: dark; border-radius: 0; font-family: var(--font-mono);">
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Description</label>
-                        <textarea class="form-control" rows="4" name="description" placeholder="Describe the trek experience, routes, requirements..." required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">{{ trek.description if trek else '' }}</textarea>
+                    <h5 class="mb-4 pb-2 border-bottom border-secondary text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Briefing & Details</h5>
+
+                    <div class="mb-5">
+                        <textarea class="form-control" rows="5" name="description" placeholder="Describe the trek experience, routes, requirements..." required style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); border-radius: 0; resize: none;">{{ trek.description if trek else '' }}</textarea>
                     </div>
 
-                    <div class="d-flex gap-3">
-                        <button type="submit" class="btn btn-primary px-4 fw-semibold flex-grow-1">
-                            {% if trek %}Update Trek{% else %}Deploy Trek{% endif %}
-                        </button>
-                        <a href="{{ url_for('admin.treks') }}" class="btn btn-ghost px-4 flex-grow-1 text-center">
-                            Cancel
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-light px-4 text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                            Abort
                         </a>
+                        <button type="submit" class="btn btn-primary px-5 text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                            {% if trek %}Update{% else %}Deploy{% endif %}
+                        </button>
                     </div>
                 </form>
             </div>

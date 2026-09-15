@@ -2,31 +2,36 @@
 {% block title %}Assign Staff{% endblock %}
 {% block content %}
 
-<div class="row justify-content-center">
+<div class="row justify-content-center mb-5 mt-4">
     <div class="col-md-6">
-        <div class="card admin-card">
-            <div class="card-header admin-card-header">
-                <h4 class="mb-0 fw-bold" style="color: var(--text-main)">Assign Trek Staff</h4>
-            </div>
-
-            <div class="card-body p-4">
-                <div class="mb-4 p-3 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
-                    <p class="mb-2" style="font-family: var(--font-mono); font-size: 0.875rem;">
-                        <strong style="color: var(--text-muted);">TREK:</strong> <span style="color: var(--text-main);">{{ trek.name }}</span>
-                    </p>
-                    <p class="mb-2" style="font-family: var(--font-mono); font-size: 0.875rem;">
-                        <strong style="color: var(--text-muted);">LOCATION:</strong> <span style="color: var(--text-main);">{{ trek.location }}</span>
-                    </p>
-                    <p class="mb-0" style="font-family: var(--font-mono); font-size: 0.875rem;">
-                        <strong style="color: var(--text-muted);">DIFFICULTY:</strong> <span style="color: var(--text-main);">{{ trek.difficulty }}</span>
-                    </p>
+        <div class="card admin-card rounded-0">
+            <div class="card-body p-5">
+                <div class="mb-4 text-center">
+                    <h4 class="mb-2 fw-bold text-uppercase" style="color: var(--text-main); letter-spacing: 0.05em; font-family: var(--font-mono);">Assign Personnel</h4>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">Link a certified guide to this expedition.</p>
+                </div>
+                
+                <div class="mb-5 p-4" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border);">
+                    <h6 class="text-uppercase mb-3" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.05em;">Mission Details</h6>
+                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary">
+                        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">TREK</span>
+                        <span style="color: var(--text-main); font-weight: 500;">{{ trek.name }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary">
+                        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">LOCATION</span>
+                        <span style="color: var(--text-main); font-weight: 500;">{{ trek.location }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">DIFFICULTY</span>
+                        <span style="color: var(--text-main); font-weight: 500;">{{ trek.difficulty }}</span>
+                    </div>
                 </div>
 
                 <form method="POST">
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold" style="color: var(--text-muted); font-size: 0.875rem;">Select Trek Guide / Staff</label>
-                        <select name="staff_id" class="form-control" style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main);">
-                            <option value="">-- Unassign Staff (No Guide) --</option>
+                    <div class="mb-5">
+                        <label class="form-label text-uppercase" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Select Guide</label>
+                        <select name="staff_id" class="form-select rounded-0" style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main);">
+                            <option value="">-- Unassign (No Guide) --</option>
                             {% for staff in staff_list %}
                                 <option value="{{ staff.id }}" {% if trek.assigned_staff == staff.id %}selected{% endif %}>
                                     {{ staff.name }} ({{ staff.username }})
@@ -35,13 +40,13 @@
                         </select>
                     </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4 fw-semibold w-100">
-                            Save Assignment
-                        </button>
-                        <a href="{{ url_for('admin.treks') }}" class="btn btn-ghost px-4 w-100">
-                            Cancel
+                    <div class="d-flex gap-3 justify-content-between">
+                        <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-light px-4 text-uppercase font-monospace text-xs w-100" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                            Abort
                         </a>
+                        <button type="submit" class="btn btn-primary px-4 text-uppercase font-monospace text-xs w-100" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                            Confirm
+                        </button>
                     </div>
                 </form>
             </div>

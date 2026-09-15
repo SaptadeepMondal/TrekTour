@@ -3,7 +3,7 @@ from flask_login import UserMixin
 import datetime
 
 class User(UserMixin, Document):
-    meta = {'collection': 'user'}
+    meta = {'collection': 'user', 'auto_create_index': False}
     username = StringField(max_length=100, unique=True, required=True)
     email = StringField(max_length=100, unique=True, required=True)
     name = StringField(max_length=100, required=True)
@@ -21,7 +21,7 @@ class User(UserMixin, Document):
 
 
 class Trek(Document):
-    meta = {'collection': 'trek'}
+    meta = {'collection': 'trek', 'auto_create_index': False}
     name = StringField(max_length=100, required=True)
     location = StringField(max_length=100, required=True)
     difficulty = StringField(max_length=50, required=True)
@@ -47,7 +47,7 @@ class Trek(Document):
 
 
 class Booking(Document):
-    meta = {'collection': 'booking'}
+    meta = {'collection': 'booking', 'auto_create_index': False}
     user_id = ReferenceField(User, required=True)
     trek_id = ReferenceField(Trek, required=True)
 

@@ -41,11 +41,16 @@ def dashboard():
     total_bookings = Booking.objects(user_id=current_user.id, trek_id__in=active_treks).count()
     upcoming = Booking.objects(user_id=current_user.id, status="Booked", trek_id__in=active_treks).count()
     completed = Booking.objects(user_id=current_user.id, status="Completed", trek_id__in=active_treks).count()
+    
+    # Get recent bookings for the dashboard table
+    recent_bookings = Booking.objects(user_id=current_user.id, trek_id__in=active_treks).order_by('-booking_date').limit(5)
+    
     return render_template(
         "user/dashboard.html",
         total_bookings=total_bookings,
         upcoming=upcoming,
-        completed=completed
+        completed=completed,
+        recent_bookings=recent_bookings
     )
 
 
