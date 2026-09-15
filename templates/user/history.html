@@ -2,61 +2,61 @@
 {% block title %}Trekking History{% endblock %}
 {% block content %}
 
-<div class="row align-items-center mb-4">
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
     <div class="col-md-6">
-        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">Trekking History</h2>
-        <p class="text-muted mb-0">Past completed treks and expedition records.</p>
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Trekking History</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Past completed treks and expedition records.</p>
     </div>
-    <div class="col-md-6 mt-3 mt-md-0 text-md-end">
-        <a href="{{ url_for('user.bookings') }}" class="btn btn-outline-secondary fw-semibold">
-            View My Bookings
+    <div class="col-md-6 mt-3 mt-md-0 d-flex justify-content-md-end">
+        <a href="{{ url_for('user.bookings') }}" class="btn btn-outline-light text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+            <i class="ph ph-ticket me-1"></i> Active Bookings
         </a>
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 bg-white">
-            <thead class="table-light">
-                <tr>
-                    <th class="ps-4">Booking ID</th>
-                    <th>Trek Destination</th>
-                    <th>Schedule Dates</th>
-                    <th>Completed Date</th>
-                    <th>Slots Reserved</th>
-                    <th class="pe-4">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for booking in bookings %}
-                <tr>
-                    <td class="ps-4 text-muted fw-semibold">#{{ booking.id }}</td>
-                    <td class="fw-bold" style="color: var(--primary);">{{ booking.trek.name }}</td>
-                    <td>
-                        <span class="small fw-semibold text-dark">
-                            {{ booking.trek.start_date.strftime('%d %b %Y') if booking.trek.start_date else 'N/A' }}
-                        </span>
-                        <span class="text-muted mx-1">to</span>
-                        <span class="small fw-semibold text-dark">
-                            {{ booking.trek.end_date.strftime('%d %b %Y') if booking.trek.end_date else 'N/A' }}
-                        </span>
-                    </td>
-                    <td>{{ booking.trek.end_date.strftime('%d-%m-%Y') if booking.trek.end_date else 'N/A' }}</td>
-                    <td>{{ booking.number_of_people }} Person</td>
-                    <td class="pe-4">
-                        <span class="badge bg-info text-white">Completed</span>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="6" class="text-center py-4 text-muted">
-                        No completed treks in your history yet.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="admin-table-container">
+    <table class="table admin-table mb-0">
+        <thead>
+            <tr>
+                <th class="ps-4">Record ID</th>
+                <th>Destination</th>
+                <th>Deployment Window</th>
+                <th>Completed Date</th>
+                <th>Manifest Size</th>
+                <th class="text-end pe-4">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for booking in bookings %}
+            <tr>
+                <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ (booking.id|string)[:8] }}...</td>
+                <td class="fw-medium">{{ booking.trek.name }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">
+                    <span style="color: var(--text-main);">{{ booking.trek.start_date.strftime('%d %b %Y') if booking.trek.start_date else 'TBD' }}</span>
+                    <span class="mx-1">/</span>
+                    <span style="color: var(--text-main);">{{ booking.trek.end_date.strftime('%d %b %Y') if booking.trek.end_date else 'TBD' }}</span>
+                </td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">
+                    {{ booking.trek.end_date.strftime('%Y-%m-%d') if booking.trek.end_date else 'N/A' }}
+                </td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-main);">
+                    {{ booking.number_of_people }} <span style="color: var(--text-muted); font-weight: 500;">pax</span>
+                </td>
+                <td class="text-end pe-4">
+                    <span class="badge-custom badge-outline" style="color: #06b6d4 !important; border-color: rgba(6, 182, 212, 0.3) !important;">
+                        <span class="badge-status-dot" style="background: #06b6d4;"></span> Completed
+                    </span>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                    No completed expeditions in your telemetry.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

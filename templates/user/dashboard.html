@@ -2,52 +2,101 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 
-<div class="row align-items-center mb-4">
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Overview</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Mission control for your upcoming expeditions.</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="bento-metric">
+            <h6 class="text-uppercase mb-3" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Total Bookings</h6>
+            <h2 class="display-5 fw-bold mb-0" style="color: var(--text-main);">{{ total_bookings }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="bento-metric">
+            <h6 class="text-uppercase mb-3" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.05em;">Upcoming Treks</h6>
+            <h2 class="display-5 fw-bold mb-0" style="color: var(--text-main);">{{ upcoming }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="bento-metric">
+            <h6 class="text-uppercase mb-3" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em;">Completed Treks</h6>
+            <h2 class="display-5 fw-bold mb-0" style="color: var(--text-main);">{{ completed }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
     <div class="col-12">
-        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">Welcome Back, {{ current_user.name }}!</h2>
-        <p class="text-muted">Explore upcoming adventures, view your bookings, and manage your profile.</p>
-    </div>
-</div>
-
-<div class="row g-4">
-    <div class="col-md-4">
-        <div class="card shadow-sm hover-card">
-            <div class="card-body p-4 text-center">
-                <h6 class="text-uppercase text-muted fw-semibold small mb-2" style="letter-spacing: 0.05em;">Total Bookings</h6>
-                <h2 class="display-5 fw-bold mb-0" style="color: var(--primary);">{{ total_bookings }}</h2>
-            </div>
+        <h5 class="mb-4 fw-bold text-uppercase" style="font-family: var(--font-mono); font-size: 0.875rem; letter-spacing: 0.05em;">
+            <i class="ph ph-clock-counter-clockwise me-2 align-middle"></i>Recent Deployments
+        </h5>
+        <div class="admin-table-container">
+            <table class="table admin-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Ref</th>
+                        <th>Destination</th>
+                        <th>Dates</th>
+                        <th>Pax</th>
+                        <th class="text-end pe-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for booking in recent_bookings %}
+                    <tr>
+                        <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ (booking.id|string)[:8] }}...</td>
+                        <td class="fw-medium" style="color: var(--text-main);">{{ booking.trek.name }}</td>
+                        <td style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+                            {{ booking.trek.start_date.strftime('%d %b') if booking.trek.start_date else '-' }} &rarr; 
+                            {{ booking.trek.end_date.strftime('%d %b') if booking.trek.end_date else '-' }}
+                        </td>
+                        <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ booking.number_of_people }}</td>
+                        <td class="text-end pe-4">
+                            {% if booking.status == "Booked" %}
+                                <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                                    <span class="badge-status-dot" style="background: #4ade80;"></span> Booked
+                                </span>
+                            {% elif booking.status == "Completed" %}
+                                <span class="badge-custom badge-outline" style="color: var(--accent) !important; border-color: rgba(6, 182, 212, 0.3) !important;">
+                                    <span class="badge-status-dot" style="background: var(--accent);"></span> Completed
+                                </span>
+                            {% elif booking.status == "Cancelled" %}
+                                <span class="badge-custom badge-outline">
+                                    <span class="badge-status-dot" style="background: var(--text-muted);"></span> Cancelled
+                                </span>
+                            {% else %}
+                                <span class="badge-custom badge-outline">{{ booking.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                            No recent deployments on record.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card shadow-sm hover-card">
-            <div class="card-body p-4 text-center">
-                <h6 class="text-uppercase text-muted fw-semibold small mb-2" style="letter-spacing: 0.05em;">Upcoming Treks</h6>
-                <h2 class="display-5 fw-bold mb-0" style="color: var(--primary);">{{ upcoming }}</h2>
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            <div style="color: var(--text-muted); font-size: 0.875rem;">
+                Seeking your next objective? 
+                <a href="{{ url_for('user.treks') }}" class="text-decoration-none ms-2" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent);">
+                    QUERY ROUTES &rarr;
+                </a>
             </div>
+            <a href="{{ url_for('user.history') }}" class="text-decoration-none" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+                VIEW ALL HISTORY &rarr;
+            </a>
         </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card shadow-sm hover-card">
-            <div class="card-body p-4 text-center">
-                <h6 class="text-uppercase text-muted fw-semibold small mb-2" style="letter-spacing: 0.05em;">Completed Treks</h6>
-                <h2 class="display-5 fw-bold mb-0" style="color: var(--primary);">{{ completed }}</h2>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="mt-4 p-4 text-center bg-white rounded shadow-sm border">
-    <h5 class="fw-bold" style="color: var(--primary);">Looking for your next adventure?</h5>
-    <p class="text-muted mb-3">Check out our catalog of hand-crafted trekking expeditions across scenic destinations.</p>
-    <div class="d-flex flex-wrap justify-content-center gap-2">
-        <a href="{{ url_for('user.treks') }}" class="btn btn-custom px-4 py-2 fw-semibold">
-            Explore Trek Catalog &rarr;
-        </a>
-        <a href="{{ url_for('user.history') }}" class="btn btn-outline-secondary px-4 py-2 fw-semibold">
-            View Trekking History
-        </a>
     </div>
 </div>
 

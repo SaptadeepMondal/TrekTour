@@ -26,15 +26,19 @@ def staff_required(func):
 @staff_required
 def staff_dashboard():
 
-    assigned_treks = Trek.objects(assigned_staff=current_user.id)
+    assigned_treks = Trek.objects(assigned_staff=current_user.id, is_deleted=False)
     assigned_treks_count = assigned_treks.count()
 
     total_participants = Booking.objects(trek_id__in=assigned_treks).count()
+    
+    # Get recent active expeditions for the dashboard table
+    recent_assigned = Trek.objects(assigned_staff=current_user.id, is_deleted=False).order_by('start_date').limit(5)
 
     return render_template(
         "staff/dashboard.html",
         assigned_treks=assigned_treks_count,
-        total_participants=total_participants
+        total_participants=total_participants,
+        recent_assigned=recent_assigned
     )
 
 

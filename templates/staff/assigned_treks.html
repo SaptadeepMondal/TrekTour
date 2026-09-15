@@ -2,77 +2,95 @@
 {% block title %}My Assigned Treks{% endblock %}
 {% block content %}
 
-<div class="row align-items-center mb-4">
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
     <div class="col-12">
-        <h2 class="fw-bold mb-1" style="color: var(--primary); letter-spacing: -0.02em;">My Assigned Treks</h2>
-        <p class="text-muted">Expeditions and treks assigned to you by the administrator.</p>
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Deployment Roster</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Expeditions and operational routes assigned to your clearance level.</p>
     </div>
 </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 bg-white">
-            <thead class="table-light">
-                <tr>
-                    <th class="ps-4">Trek Destination</th>
-                    <th>Location</th>
-                    <th>Difficulty</th>
-                    <th>Schedule Dates</th>
-                    <th>Slots Booking</th>
-                    <th>Status</th>
-                    <th class="text-end pe-4" width="220">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for trek in treks %}
-                <tr class="{% if trek.status == 'Completed' %}table-light text-muted{% endif %}">
-                    <td class="ps-4 fw-bold text-dark">{{ trek.name }}</td>
-                    <td>{{ trek.location }}</td>
-                    <td>
-                        {% if trek.difficulty == "Easy" %}
-                            <span class="badge bg-success-subtle text-success border border-success-subtle">Easy</span>
-                        {% elif trek.difficulty == "Moderate" %}
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle text-dark">Moderate</span>
-                        {% else %}
-                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Hard</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <span class="small">{{ trek.start_date.strftime('%d %b %Y') if trek.start_date }} - {{ trek.end_date.strftime('%d %b %Y') if trek.end_date }}</span>
-                    </td>
-                    <td>
-                        <span class="fw-semibold">{{ trek.available_slots }}</span><span class="text-muted">/{{ trek.total_slots }}</span>
-                    </td>
-                    <td>
-                        {% if trek.status == "Open" %}
-                            <span class="badge bg-success text-white">Open</span>
-                        {% elif trek.status == "Closed" %}
-                            <span class="badge bg-secondary text-white">Closed</span>
-                        {% elif trek.status == "Completed" %}
-                            <span class="badge bg-info text-white">Completed</span>
-                        {% else %}
-                            <span class="badge bg-light text-dark border">{{ trek.status }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end pe-4">
-                        <a class="btn btn-sm btn-primary fw-semibold me-1" href="{{ url_for('staff.update_trek', id=trek.id) }}">
-                            Update Status
+<div class="admin-table-container">
+    <table class="table admin-table mb-0">
+        <thead>
+            <tr>
+                <th class="ps-4">Record ID</th>
+                <th>Destination</th>
+                <th>Location</th>
+                <th>Class</th>
+                <th>Deployment Window</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th class="text-end pe-4" width="220">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for trek in treks %}
+            <tr>
+                <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ (trek.id|string)[:8] }}...</td>
+                <td class="fw-medium">{{ trek.name }}</td>
+                <td style="color: var(--text-muted); font-size: 0.875rem;">{{ trek.location }}</td>
+                <td>
+                    {% if trek.difficulty == "Easy" %}
+                        <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #4ade80;"></span> Easy
+                        </span>
+                    {% elif trek.difficulty == "Moderate" %}
+                        <span class="badge-custom badge-outline" style="color: #facc15 !important; border-color: rgba(250, 204, 21, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #facc15;"></span> Moderate
+                        </span>
+                    {% else %}
+                        <span class="badge-custom badge-outline" style="color: #f87171 !important; border-color: rgba(248, 113, 113, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #f87171;"></span> Hard
+                        </span>
+                    {% endif %}
+                </td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">
+                    <span style="color: var(--text-main);">{{ trek.start_date.strftime('%d %b %Y') if trek.start_date else 'TBD' }}</span>
+                    <span class="mx-1">/</span>
+                    <span style="color: var(--text-main);">{{ trek.end_date.strftime('%d %b %Y') if trek.end_date else 'TBD' }}</span>
+                </td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem;">
+                    <span style="color: var(--text-main);">{{ trek.available_slots }}</span><span style="color: var(--text-muted);">/{{ trek.total_slots }}</span>
+                </td>
+                <td>
+                    {% if trek.status == "Open" %}
+                        <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #4ade80;"></span> Open
+                        </span>
+                    {% elif trek.status == "Closed" %}
+                        <span class="badge-custom badge-outline" style="color: #f87171 !important; border-color: rgba(248, 113, 113, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #f87171;"></span> Closed
+                        </span>
+                    {% elif trek.status == "Completed" %}
+                        <span class="badge-custom badge-outline" style="color: #06b6d4 !important; border-color: rgba(6, 182, 212, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #06b6d4;"></span> Completed
+                        </span>
+                    {% else %}
+                        <span class="badge-custom badge-outline" style="color: #a1a1aa !important; border-color: rgba(161, 161, 170, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #a1a1aa;"></span> {{ trek.status }}
+                        </span>
+                    {% endif %}
+                </td>
+                <td class="text-end pe-4">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a class="btn btn-sm btn-outline-light text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;" href="{{ url_for('staff.update_trek', id=trek.id) }}">
+                            Status
                         </a>
-                        <a class="btn btn-sm btn-custom fw-semibold" href="{{ url_for('staff.participants', id=trek.id) }}">
-                            Trekkers
+                        <a class="btn btn-sm btn-primary text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;" href="{{ url_for('staff.participants', id=trek.id) }}">
+                            Manifest
                         </a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7" class="text-center py-4 text-muted">
-                        You have not been assigned to any treks yet.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                    No deployments assigned to your ID currently.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

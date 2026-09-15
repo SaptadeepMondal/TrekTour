@@ -2,69 +2,76 @@
 {% block title %}Bookings Management{% endblock %}
 {% block content %}
 
-<div class="row align-items-center mb-4">
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
     <div class="col-md-6">
-        <h2 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">Bookings Management</h2>
-        <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Overview of all trek manifests.</p>
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Bookings Log</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Overview of all trek manifests and schedules.</p>
     </div>
-    <div class="col-md-6 mt-3 mt-md-0">
-        <form method="GET" class="d-flex justify-content-md-end">
-            <div class="input-group" style="max-width: 350px;">
-                <input type="text" name="search" class="form-control" placeholder="Search user or trek..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
-                <button class="btn btn-primary" type="submit">Search</button>
+    <div class="col-md-6 mt-3 mt-md-0 d-flex justify-content-md-end">
+        <form method="GET" class="d-flex w-100" style="max-width: 350px;">
+            <div class="input-group" style="border-radius: 0;">
+                <span class="input-group-text text-muted rounded-0 px-3 border-end-0" style="background: var(--bg-surface); border-color: var(--border);">
+                    <i class="ph ph-magnifying-glass"></i>
+                </span>
+                <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Search user or trek..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); box-shadow: none;">
+                <button class="btn btn-primary text-uppercase font-monospace text-xs" type="submit" style="font-size: 0.75rem; letter-spacing: 0.05em;">Run Query</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="card admin-card">
-    <div class="table-responsive admin-table-container">
-        <table class="table admin-table">
-            <thead>
-                <tr>
-                    <th class="ps-4">Booking ID</th>
-                    <th>User / Trekker</th>
-                    <th>Destination</th>
-                    <th>Schedule Dates</th>
-                    <th>Booking Date</th>
-                    <th>Slots</th>
-                    <th class="pe-4">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for booking in bookings %}
-                <tr>
-                    <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">#{{ booking.id }}</td>
-                    <td class="fw-medium">{{ booking.user.name }}</td>
-                    <td class="fw-medium" style="color: var(--text-main);">{{ booking.trek.name }}</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">
-                        {{ booking.trek.start_date.strftime('%d %b %Y') if booking.trek.start_date else 'N/A' }}
-                        &rarr;
-                        {{ booking.trek.end_date.strftime('%d %b %Y') if booking.trek.end_date else 'N/A' }}
-                    </td>
-                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ booking.booking_date.strftime('%d-%m-%Y') if booking.booking_date }}</td>
-                    <td style="font-family: var(--font-mono); color: var(--text-main);">{{ booking.number_of_people }} Pax</td>
-                    <td class="pe-4">
-                        {% if booking.status == "Booked" %}
-                            <span class="badge badge-custom bg-success text-white">Booked</span>
-                        {% elif booking.status == "Completed" %}
-                            <span class="badge badge-custom bg-info text-white">Completed</span>
-                        {% elif booking.status == "Cancelled" %}
-                            <span class="badge badge-custom" style="background: var(--border); color: var(--text-muted);">Cancelled</span>
-                        {% else %}
-                            <span class="badge badge-custom bg-secondary text-white">{{ booking.status }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
-                        No bookings found matching your search.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="admin-table-container mt-4">
+    <table class="table admin-table mb-0">
+        <thead>
+            <tr>
+                <th class="ps-4">Ref ID</th>
+                <th>User / Trekker</th>
+                <th>Destination</th>
+                <th>Schedule Dates</th>
+                <th>Booking Date</th>
+                <th>Slots</th>
+                <th class="text-end pe-4">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for booking in bookings %}
+            <tr>
+                <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ booking.id }}</td>
+                <td class="fw-medium">{{ booking.user.name }}</td>
+                <td class="fw-medium" style="color: var(--text-main);">{{ booking.trek.name }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">
+                    {{ booking.trek.start_date.strftime('%d %b %Y') if booking.trek.start_date else '--' }}
+                    &rarr;
+                    {{ booking.trek.end_date.strftime('%d %b %Y') if booking.trek.end_date else '--' }}
+                </td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ booking.booking_date.strftime('%d-%m-%Y') if booking.booking_date }}</td>
+                <td style="font-family: var(--font-mono); color: var(--text-main);">{{ booking.number_of_people }} <span class="text-muted">Pax</span></td>
+                <td class="text-end pe-4">
+                    {% if booking.status == "Booked" %}
+                        <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #4ade80;"></span> Booked
+                        </span>
+                    {% elif booking.status == "Completed" %}
+                        <span class="badge-custom badge-outline" style="color: var(--accent) !important; border-color: rgba(6, 182, 212, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: var(--accent);"></span> Completed
+                        </span>
+                    {% elif booking.status == "Cancelled" %}
+                        <span class="badge-custom badge-outline">
+                            <span class="badge-status-dot" style="background: var(--text-muted);"></span> Cancelled
+                        </span>
+                    {% else %}
+                        <span class="badge-custom badge-outline">{{ booking.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                    No telemetry matching your query.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

@@ -3,79 +3,80 @@
 {% block title %}Users Management{% endblock %}
 
 {% block content %}
-<div class="row align-items-center mb-4">
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
     <div class="col-md-6">
-        <h2 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">Users Management</h2>
-        <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">View registered trekkers and manage accounts status.</p>
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Users Manifest</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">View registered trekkers and manage accounts status.</p>
     </div>
-    <div class="col-md-6 mt-3 mt-md-0">
-        <form method="GET" class="d-flex justify-content-md-end">
-            <div class="input-group" style="max-width: 350px;">
-                <input type="text" name="search" class="form-control" placeholder="Search by name..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
-                <button class="btn btn-primary" type="submit">Search</button>
+    <div class="col-md-6 mt-3 mt-md-0 d-flex justify-content-md-end">
+        <form method="GET" class="d-flex w-100" style="max-width: 350px;">
+            <div class="input-group" style="border-radius: 0;">
+                <span class="input-group-text text-muted rounded-0 px-3 border-end-0" style="background: var(--bg-surface); border-color: var(--border);">
+                    <i class="ph ph-magnifying-glass"></i>
+                </span>
+                <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Search by name..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); box-shadow: none;">
+                <button class="btn btn-primary text-uppercase font-monospace text-xs" type="submit" style="font-size: 0.75rem; letter-spacing: 0.05em;">Run Query</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="card admin-card">
-    <div class="table-responsive admin-table-container">
-        <table class="table admin-table">
-            <thead>
-                <tr>
-                    <th class="ps-4">ID</th>
-                    <th>Name</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th class="text-end pe-4" width="180">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
-                <tr>
-                    <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">#{{ user.id }}</td>
-                    <td class="fw-medium">{{ user.name }}</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.875rem;">{{ user.username }}</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ user.email }}</td>
-                    <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ user.phone or '-' }}</td>
-                    <td>
-                        {% if user.status == "approved" %}
-                            <span class="badge badge-custom bg-success text-white">
-                                Approved
-                            </span>
-                        {% elif user.status == "blacklisted" %}
-                            <span class="badge badge-custom bg-danger text-white">
-                                Blacklisted
-                            </span>
-                        {% else %}
-                            <span class="badge badge-custom bg-warning text-dark">
-                                {{ user.status|capitalize }}
-                            </span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end pe-4">
-                        {% if user.status == "approved" %}
-                            <a href="{{ url_for('admin.blacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-danger" style="font-weight: 500;">
-                                Blacklist
-                            </a>
-                        {% else %}
-                            <a href="{{ url_for('admin.unblacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-success" style="font-weight: 500;">
-                                Restore
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
-                        No users found matching your search.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="admin-table-container mt-4">
+    <table class="table admin-table mb-0">
+        <thead>
+            <tr>
+                <th class="ps-4">ID</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th class="text-end pe-4" width="160">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ user.id }}</td>
+                <td class="fw-medium">{{ user.name }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem;">{{ user.username }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ user.email }}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-muted);">{{ user.phone or '--' }}</td>
+                <td>
+                    {% if user.status == "approved" %}
+                        <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #4ade80;"></span> Approved
+                        </span>
+                    {% elif user.status == "blacklisted" %}
+                        <span class="badge-custom badge-outline" style="color: #f87171 !important; border-color: rgba(248, 113, 113, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #f87171;"></span> Blacklisted
+                        </span>
+                    {% else %}
+                        <span class="badge-custom badge-outline" style="color: #facc15 !important; border-color: rgba(250, 204, 21, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #facc15;"></span> {{ user.status|capitalize }}
+                        </span>
+                    {% endif %}
+                </td>
+                <td class="text-end pe-4">
+                    {% if user.status == "approved" %}
+                        <a href="{{ url_for('admin.blacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-danger font-monospace text-uppercase" style="font-size: 0.7rem; border-radius: 0;">
+                            Blacklist
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('admin.unblacklist_user', id=user.id) }}" class="btn btn-sm btn-outline-success font-monospace text-uppercase" style="font-size: 0.7rem; border-radius: 0;">
+                            Restore
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                    No users found matching your search.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

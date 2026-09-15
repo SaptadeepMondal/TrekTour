@@ -528,57 +528,137 @@ h1, h2, h3 {
 }
 
 /* Admin Global Overrides */
-.admin-body {
-    background-color: var(--bg-base) !important;
-    color: var(--text-main) !important;
+.admin-layout {
+    display: flex;
+    min-height: 100dvh;
+    background-color: var(--bg-base);
+    color: var(--text-main);
 }
 
-.admin-nav {
-    background-color: rgba(9, 9, 11, 0.8) !important;
-    backdrop-filter: blur(12px);
+.admin-sidebar {
+    width: 260px;
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    z-index: 100;
+}
+
+.admin-sidebar-header {
+    padding: 2rem 1.5rem;
     border-bottom: 1px solid var(--border);
 }
 
-.admin-nav .navbar-brand {
-    color: var(--text-main) !important;
-    font-weight: 600;
+.admin-sidebar-nav {
+    flex: 1;
+    padding: 1.5rem 0;
+    overflow-y: auto;
 }
 
-.admin-nav .nav-link {
-    color: var(--text-muted) !important;
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: var(--text-muted);
+    text-decoration: none;
     font-weight: 500;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
 }
 
-.admin-nav .nav-link:hover, .admin-nav .nav-link.active {
-    color: var(--text-main) !important;
+.admin-nav-item:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.02);
 }
 
+.admin-nav-item.active {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.03);
+    border-left-color: var(--accent);
+}
+
+.admin-sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.admin-topbar {
+    height: 72px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-base);
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    justify-content: flex-end;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 3rem 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.admin-footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+/* Sharp UI overrides */
 .admin-card {
-    background-color: var(--bg-surface) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 12px;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
 }
 
 .admin-card-header {
     background-color: transparent !important;
     border-bottom: 1px solid var(--border) !important;
-    padding: 1.25rem 1.5rem !important;
+    padding: 1rem 0 !important;
+    border-radius: 0 !important;
+}
+
+.bento-metric {
+    border: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--bg-surface);
 }
 
 .admin-table-container {
-    border-radius: 0 0 12px 12px;
-    overflow: hidden;
+    border-radius: 0;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    background: var(--bg-surface);
 }
 
 .table.admin-table {
     margin-bottom: 0;
     color: var(--text-main);
     border-color: var(--border);
+    --bs-table-bg: transparent;
 }
 
 .table.admin-table th {
-    background-color: var(--bg-base) !important;
+    background-color: transparent !important;
     color: var(--text-muted) !important;
     font-family: var(--font-mono);
     font-size: 0.75rem;
@@ -601,18 +681,75 @@ h1, h2, h3 {
     background-color: rgba(255,255,255,0.02) !important;
 }
 
+.table.admin-table tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* Square inputs & buttons */
+.admin-main .btn,
+.admin-main .form-control,
+.admin-main .form-select {
+    border-radius: 0 !important;
+}
+
+/* Sharp badges */
 .badge-custom {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     padding: 0.35em 0.65em;
-    border-radius: 4px;
+    border-radius: 0 !important;
     font-weight: 500;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    white-space: nowrap;
 }
 
-.admin-footer {
-    border-top: 1px solid var(--border) !important;
-    background-color: transparent !important;
+.badge-outline {
+    background: transparent !important;
+    border-color: var(--border) !important;
     color: var(--text-muted) !important;
+}
+
+.badge-status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Forms layout */
+.admin-config-panel {
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    padding: 2rem;
+}
+
+.admin-form-group {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-form-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.admin-form-label {
+    display: block;
+    color: var(--text-main);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.admin-form-desc {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
 }
 
 /* Pagination Overrides */
@@ -620,6 +757,7 @@ h1, h2, h3 {
     background-color: var(--bg-surface) !important;
     border-color: var(--border) !important;
     color: var(--text-main) !important;
+    border-radius: 0 !important;
 }
 
 .pagination .page-item.active .page-link {
@@ -632,4 +770,31 @@ h1, h2, h3 {
     background-color: var(--bg-base) !important;
     border-color: var(--border) !important;
     color: var(--text-muted) !important;
+}
+
+@media (max-width: 768px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    .admin-sidebar-nav {
+        display: flex;
+        overflow-x: auto;
+        padding: 0.5rem;
+    }
+    .admin-nav-item {
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+    }
+    .admin-nav-item.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--accent);
+    }
 }

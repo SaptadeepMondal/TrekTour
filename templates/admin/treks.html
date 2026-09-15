@@ -1,111 +1,118 @@
 {% extends "admin/base.html" %}
 {% block title %}Manage Treks{% endblock %}
 {% block content %}
-<div class="row align-items-center mb-4">
+<div class="row align-items-end mb-4 border-bottom border-secondary pb-4">
     <div class="col-md-6">
-        <h2 class="fw-bold mb-1" style="color: var(--text-main); letter-spacing: -0.02em;">Treks Catalog</h2>
-        <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Create, edit, assign guides, and configure trekking routes.</p>
+        <h2 class="fw-bold mb-2" style="color: var(--text-main); letter-spacing: -0.02em; font-size: 2rem;">Treks Catalog</h2>
+        <p class="mb-0" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.875rem;">Create, edit, and monitor expedition routes.</p>
     </div>
     <div class="col-md-6 mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-md-end">
         <form method="GET" class="d-flex">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search treks..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main);">
-                <button class="btn btn-primary" type="submit">Search</button>
+            <div class="input-group" style="border-radius: 0;">
+                <span class="input-group-text text-muted rounded-0 px-3 border-end-0" style="background: var(--bg-surface); border-color: var(--border);">
+                    <i class="ph ph-magnifying-glass"></i>
+                </span>
+                <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Search routes..." value="{{ search }}" style="background: var(--bg-surface); border-color: var(--border); color: var(--text-main); box-shadow: none;">
+                <button class="btn btn-primary text-uppercase font-monospace text-xs" type="submit" style="font-size: 0.75rem; letter-spacing: 0.05em;">Run Query</button>
             </div>
         </form>
-        <a href="{{ url_for('admin.add_trek') }}" class="btn btn-primary fw-semibold px-3">
-            Deploy Route
+        <a href="{{ url_for('admin.add_trek') }}" class="btn btn-outline-light text-uppercase font-monospace text-xs" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+            <i class="ph ph-plus me-1"></i> Deploy
         </a>
     </div>
 </div>
 
-<div class="card admin-card">
-    <div class="table-responsive admin-table-container">
-        <table class="table admin-table">
-            <thead>
-                <tr>
-                    <th class="ps-4">ID</th>
-                    <th>Trek Name</th>
-                    <th>Location</th>
-                    <th>Difficulty</th>
-                    <th>Duration</th>
-                    <th>Slots</th>
-                    <th>Status</th>
-                    <th>Guide</th>
-                    <th class="text-end pe-4" width="260">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for trek in treks %}
-                <tr class="{% if trek.is_deleted %}opacity-50{% endif %}">
-                    <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">#{{ trek.id }}</td>
-                    <td class="fw-medium">
-                        {{ trek.name }}
+<div class="admin-table-container mt-4">
+    <table class="table admin-table mb-0">
+        <thead>
+            <tr>
+                <th class="ps-4">ID</th>
+                <th>Trek Name</th>
+                <th>Location</th>
+                <th>Difficulty</th>
+                <th>Duration</th>
+                <th>Slots</th>
+                <th>Status</th>
+                <th>Guide</th>
+                <th class="text-end pe-4" width="220">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for trek in treks %}
+            <tr class="{% if trek.is_deleted %}opacity-50{% endif %}">
+                <td class="ps-4" style="font-family: var(--font-mono); color: var(--text-muted);">{{ trek.id }}</td>
+                <td class="fw-medium">
+                    {{ trek.name }}
+                    {% if trek.is_deleted %}
+                        <span class="badge-custom badge-outline ms-2 small" style="font-size: 0.65rem;">ARCHIVED</span>
+                    {% endif %}
+                </td>
+                <td style="color: var(--text-muted); font-size: 0.875rem;">{{ trek.location }}</td>
+                <td>
+                    {% if trek.difficulty == "Easy" %}
+                        <span class="badge-custom badge-outline" style="color: #4ade80 !important; border-color: rgba(74, 222, 128, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #4ade80;"></span> Easy
+                        </span>
+                    {% elif trek.difficulty == "Moderate" %}
+                        <span class="badge-custom badge-outline" style="color: #facc15 !important; border-color: rgba(250, 204, 21, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #facc15;"></span> Moderate
+                        </span>
+                    {% else %}
+                        <span class="badge-custom badge-outline" style="color: #f87171 !important; border-color: rgba(248, 113, 113, 0.3) !important;">
+                            <span class="badge-status-dot" style="background: #f87171;"></span> Hard
+                        </span>
+                    {% endif %}
+                </td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-main);">{{ trek.duration }}<span style="color: #d4d4d8; margin-left: 4px; font-weight: 500;">d</span></td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem;">
+                    <span class="text-white">{{ trek.available_slots }}</span><span style="color: var(--text-muted);">/{{ trek.total_slots }}</span>
+                </td>
+                <td>
+                    {% if trek.status == "Open" %}
+                        <span class="text-success small fw-medium" style="font-family: var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase;">Open</span>
+                    {% elif trek.status == "Closed" %}
+                        <span class="text-muted small fw-medium" style="font-family: var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase;">Closed</span>
+                    {% elif trek.status == "Completed" %}
+                        <span class="text-info small fw-medium" style="font-family: var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase;">Completed</span>
+                    {% else %}
+                        <span class="text-muted small fw-medium" style="font-family: var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase;">{{ trek.status }}</span>
+                    {% endif %}
+                </td>
+                <td style="font-family: var(--font-mono); font-size: 0.875rem;">
+                    {% if trek.assigned_staff %}
+                        <i class="ph ph-check-circle text-info fs-6"></i>
+                    {% else %}
+                        <span style="color: var(--text-muted);">--</span>
+                    {% endif %}
+                </td>
+                <td class="text-end pe-4">
+                    <div class="btn-group">
+                        <a href="{{ url_for('admin.edit_trek', id=trek.id) }}" class="btn btn-sm btn-ghost p-1" title="Edit">
+                            <i class="ph ph-pencil-simple fs-5 text-muted"></i>
+                        </a>
+                        <a href="{{ url_for('admin.assign_staff', id=trek.id) }}" class="btn btn-sm btn-ghost p-1" title="Assign Guide">
+                            <i class="ph ph-user-plus fs-5 text-info"></i>
+                        </a>
                         {% if trek.is_deleted %}
-                            <span class="badge badge-custom ms-1 small" style="background: var(--border); color: var(--text-muted);">Archived</span>
-                        {% endif %}
-                    </td>
-                    <td style="color: var(--text-muted);">{{ trek.location }}</td>
-                    <td>
-                        {% if trek.difficulty == "Easy" %}
-                            <span class="badge badge-custom bg-success text-white">Easy</span>
-                        {% elif trek.difficulty == "Moderate" %}
-                            <span class="badge badge-custom text-dark" style="background-color: #facc15;">Moderate</span>
-                        {% else %}
-                            <span class="badge badge-custom bg-danger text-white">Hard</span>
-                        {% endif %}
-                    </td>
-                    <td style="font-family: var(--font-mono); color: var(--text-main);">{{ trek.duration }} Days</td>
-                    <td style="font-family: var(--font-mono);">
-                        <span class="fw-semibold">{{ trek.available_slots }}</span><span style="color: var(--text-muted);">/{{ trek.total_slots }}</span>
-                    </td>
-                    <td>
-                        {% if trek.status == "Open" %}
-                            <span class="badge badge-custom bg-success text-white">Open</span>
-                        {% elif trek.status == "Closed" %}
-                            <span class="badge badge-custom bg-secondary text-white">Closed</span>
-                        {% elif trek.status == "Completed" %}
-                            <span class="badge badge-custom bg-info text-white">Completed</span>
-                        {% else %}
-                            <span class="badge badge-custom" style="background: var(--border); color: var(--text-main);">{{ trek.status }}</span>
-                        {% endif %}
-                    </td>
-                    <td style="font-family: var(--font-mono); font-size: 0.875rem;">
-                        {% if trek.assigned_staff %}
-                            <span style="color: var(--accent);">Assigned</span>
-                        {% else %}
-                            <span style="color: var(--text-muted);">None</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end pe-4">
-                        <div class="btn-group btn-group-sm">
-                            <a href="{{ url_for('admin.edit_trek', id=trek.id) }}" class="btn btn-outline-light">
-                                Edit
+                            <a href="{{ url_for('admin.restore_trek', id=trek.id) }}" class="btn btn-sm btn-ghost p-1" title="Restore">
+                                <i class="ph ph-arrow-counter-clockwise fs-5 text-warning"></i>
                             </a>
-                            <a href="{{ url_for('admin.assign_staff', id=trek.id) }}" class="btn btn-outline-info">
-                                Assign
+                        {% else %}
+                            <a href="{{ url_for('admin.delete_trek', id=trek.id) }}" class="btn btn-sm btn-ghost p-1" title="Archive">
+                                <i class="ph ph-trash fs-5 text-danger"></i>
                             </a>
-                            {% if trek.is_deleted %}
-                                <a href="{{ url_for('admin.restore_trek', id=trek.id) }}" class="btn btn-outline-warning">
-                                    Restore
-                                </a>
-                            {% else %}
-                                <a href="{{ url_for('admin.delete_trek', id=trek.id) }}" class="btn btn-outline-danger">
-                                    Delete
-                                </a>
-                            {% endif %}
-                        </div>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="9" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
-                        No trek records available.
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9" class="text-center py-5" style="color: var(--text-muted); font-family: var(--font-mono);">
+                    No telemetry records available.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
